@@ -38,6 +38,10 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="CPU.cs" />
+        <Compile Include="OpCodes.cs" />
+        <Compile Include="OpCodesDecoder.cs" />
+        <Compile Include="Operator.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

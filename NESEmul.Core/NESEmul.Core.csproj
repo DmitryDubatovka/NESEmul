@@ -39,6 +39,10 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CPU.cs" />
+        <Compile Include="Exceptions\ApplicationException.cs" />
+        <Compile Include="Exceptions\InvalidByteCodeException.cs" />
+        <Compile Include="Exceptions\MemoryOutOfRangeException.cs" />
+        <Compile Include="Memory.cs" />
         <Compile Include="OpCodes.cs" />
         <Compile Include="OpCodesDecoder.cs" />
         <Compile Include="Operator.cs" />

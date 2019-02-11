@@ -8,6 +8,7 @@ namespace NESEmul.Core
         public ushort ProgramCounter { get; set; }
         private byte _stackPointer;
         private readonly Memory _memory;
+        private readonly OpCodesDecoder _decoder;
 
         public byte Accumulator { get; set; }
         public byte IndexRegisterX { get; set; }
@@ -25,6 +26,35 @@ namespace NESEmul.Core
             ProgramCounter = programCounter;
             _stackPointer = stackPointer;
             _memory = memory;
+            _decoder = new OpCodesDecoder(this, memory);
+        }
+
+        public void Do()
+        {
+            while (true)
+            {
+
+                var @operator = _decoder.Decode(_memory.LoadByteFromMemory(ProgramCounter));
+                DoOperator(@operator);
+                ProgramCounter += @operator.Length;
+            }
+        }
+
+        private void DoOperator(Operator @operator)
+        {
+            switch (@operator.OpCode)
+            {
+                case OpCodes.ADCIm:
+                case OpCodes.ADCAbs:
+                case OpCodes.ADCZP:
+                case OpCodes.ADCAbsX:
+                case OpCodes.ADCAbsY:
+                case OpCodes.ADCIndX:
+                case OpCodes.ADCIndY:
+                case OpCodes.ADCZPX:
+                    DoADCOperation(@operator);
+                    break;
+            }
         }
 
         private void DoADCOperation(Operator op)
@@ -82,14 +112,14 @@ namespace NESEmul.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int Build2BytesAddress(Operator op, byte additionalOffset = 0)
+        private static int Build2BytesAddress(Operator op, byte additionalOffset = 0)
         {
             return Build2BytesAddress(op.Operands[0], op.Operands[1], additionalOffset);
             //return (op.Operands[1] << 8) + op.Operands[0] + additionalOffset;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int Build2BytesAddress(byte hiByte, byte lowByte, byte additionalOffset = 0)
+        private static int Build2BytesAddress(byte hiByte, byte lowByte, byte additionalOffset = 0)
         {
             return ((lowByte << 8) + hiByte + additionalOffset) & 0xFFFF;
         }

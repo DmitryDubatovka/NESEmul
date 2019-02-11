@@ -18,7 +18,11 @@ namespace NESEmul.UnitTests
         [Test]
         public void ADCTest()
         {
-            
+            _memory.StoreByteInMemory(0, (byte)OpCodes.ADCIm);
+            _cpu.Accumulator = 0x5;
+            _memory.StoreByteInMemory(1, 0x10);
+            _cpu.Do();
+
         }
     }
 }

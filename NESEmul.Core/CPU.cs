@@ -27,11 +27,13 @@ namespace NESEmul.Core
             _stackPointer = stackPointer;
             _memory = memory;
             _decoder = new OpCodesDecoder(this, memory);
+
+            BreakCommand = false;
         }
 
         public void Do()
         {
-            while (true)
+            while (!BreakCommand)
             {
 
                 var @operator = _decoder.Decode(_memory.LoadByteFromMemory(ProgramCounter));
@@ -44,6 +46,10 @@ namespace NESEmul.Core
         {
             switch (@operator.OpCode)
             {
+                case OpCodes.BRK:
+                    BreakCommand = true;
+                    break;
+
                 case OpCodes.ADCIm:
                 case OpCodes.ADCAbs:
                 case OpCodes.ADCZP:
@@ -64,7 +70,7 @@ namespace NESEmul.Core
             switch (op.OpCode)
             {
                 case OpCodes.ADCIm:
-                    operandValue = op.Operands[0]; 
+                    operandValue = op.Operands[0];
                     break;
                 case OpCodes.ADCZP:
                     byte address = op.Operands[0];
@@ -108,7 +114,7 @@ namespace NESEmul.Core
             bool equalSign = (accum & 0x80 ^ operandValue & 0x80) == 0;
             OverflowFlag = equalSign && ((accum ^ byteNewValue) & 0x80) != 0;
             CarryFlag = intNewValue > byte.MaxValue;
-            NegativeFlag = (intNewValue & 0x80) == 1;
+            NegativeFlag = (intNewValue & 0x80) == 0x80;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

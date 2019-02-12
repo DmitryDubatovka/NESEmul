@@ -39,6 +39,9 @@ namespace NESEmul.Core
             OpCodes opCode = OpCodesDictionary[code];
             switch (opCode)
             {
+                case OpCodes.BRK:
+                    return new Operator(opCode, new byte[0]);
+
                 case OpCodes.ADCIm:
                 case OpCodes.ADCAbs:
                 case OpCodes.ADCZP:
@@ -57,7 +60,6 @@ namespace NESEmul.Core
             switch (opCode)
             {
                 case OpCodes.ADCIm:
-                case OpCodes.ADCAbs:
                 case OpCodes.ADCZP:
                 case OpCodes.ADCZPX:
                 case OpCodes.ADCIndX:

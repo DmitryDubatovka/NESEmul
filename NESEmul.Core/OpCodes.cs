@@ -2,6 +2,11 @@ namespace NESEmul.Core
 {
     public enum OpCodes : byte
     {
+        /// <summary>
+        /// Force break
+        /// </summary>
+        BRK = 0x0,
+
         #region ADC
 
         /// <summary>
@@ -43,5 +48,6 @@ namespace NESEmul.Core
 
         #endregion
         
+
     }
 }

@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace NESEmul.UnitTests
 {
     [TestFixture]
-    public class CPUOperationsTests
+    public class CPUADCOperationTests
     {
         private CPU _cpu;
         private Memory _memory;

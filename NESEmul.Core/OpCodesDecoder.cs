@@ -40,7 +40,7 @@ namespace NESEmul.Core
             switch (opCode)
             {
                 case OpCodes.BRK:
-                    return new Operator(opCode, new byte[0]);
+                    return new Operator(opCode, new byte[0], AddressingMode.Implicit);
 
                 case OpCodes.ADCIm:
                 case OpCodes.ADCAbs:
@@ -50,24 +50,92 @@ namespace NESEmul.Core
                 case OpCodes.ADCIndX:
                 case OpCodes.ADCIndY:
                 case OpCodes.ADCZPX:
-                    return DecodeADCOperators(opCode);
+                    return DecodeADCOperator(opCode);
+
+                case OpCodes.ANDIm:
+                case OpCodes.ANDZP:
+                case OpCodes.ANDZPX:
+                case OpCodes.ANDAbs:
+                case OpCodes.ANDAbsX:
+                case OpCodes.ANDAbsY:
+                case OpCodes.ANDIndX:
+                case OpCodes.ANDIndY:
+                    return DecodeANDOperator(opCode);
+
+                case OpCodes.ASLAccum:
+                case OpCodes.ASLZP:
+                case OpCodes.ASLZPX:
+                case OpCodes.ASLAbs:
+                case OpCodes.ASLAbsX:
+                    return DecodeASLOperator(opCode);
             }
-            throw new InvalidByteCodeException();
+            throw new InvalidByteCodeException(code);
         }
 
-        private Operator DecodeADCOperators(OpCodes opCode)
+        private Operator DecodeADCOperator(OpCodes opCode)
         {
             switch (opCode)
             {
                 case OpCodes.ADCIm:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.Immediate);
                 case OpCodes.ADCZP:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPage);
                 case OpCodes.ADCZPX:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPageX);
                 case OpCodes.ADCIndX:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.IndexedIndirect);
                 case OpCodes.ADCIndY:
-                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)});
-                default:
-                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1));
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.IndirectIndexed);
+                case OpCodes.ADCAbs:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.Absolute);
+                case OpCodes.ADCAbsX:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.AbsoluteX);
+                case OpCodes.ADCAbsY:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.AbsoluteY);
             }
+            throw new InvalidByteCodeException((byte) opCode);
+        }
+
+        private Operator DecodeANDOperator(OpCodes opCode)
+        {
+            switch (opCode)
+            {
+                case OpCodes.ANDIm:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.Immediate);
+                case OpCodes.ANDZP:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPage);
+                case OpCodes.ANDZPX:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPageX);
+                case OpCodes.ANDIndX:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.IndexedIndirect);
+                case OpCodes.ANDIndY:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.IndirectIndexed);
+                case OpCodes.ANDAbs:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.Absolute);
+                case OpCodes.ANDAbsX:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.AbsoluteX);
+                case OpCodes.ANDAbsY:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.AbsoluteY);
+            }
+            throw new InvalidByteCodeException((byte) opCode);
+        }
+
+        private Operator DecodeASLOperator(OpCodes opCode)
+        {
+            switch (opCode)
+            {
+                case OpCodes.ASLAccum:
+                    return new Operator(opCode, new byte[0], AddressingMode.Accumulator);
+                case OpCodes.ASLZP:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPage);
+                case OpCodes.ASLZPX:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.ZeroPageX);
+                case OpCodes.ASLAbs:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.Absolute);
+                case OpCodes.ASLAbsX:
+                    return new Operator(opCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1), AddressingMode.AbsoluteX);
+            }
+            throw new InvalidByteCodeException((byte) opCode);
         }
     }
 }

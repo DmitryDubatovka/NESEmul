@@ -60,53 +60,33 @@ namespace NESEmul.Core
                 case OpCodes.ADCZPX:
                     DoADCOperation(@operator);
                     break;
+
+                case OpCodes.ANDAbs:
+                case OpCodes.ANDIm:
+                case OpCodes.ANDZP:
+                case OpCodes.ANDZPX:
+                case OpCodes.ANDAbsX:
+                case OpCodes.ANDAbsY:
+                case OpCodes.ANDIndX:
+                case OpCodes.ANDIndY:
+                    DoANDOperation(@operator);
+                    break;
+
+                case OpCodes.ASLAccum:
+                case OpCodes.ASLZP:
+                case OpCodes.ASLZPX:
+                case OpCodes.ASLAbs:
+                case OpCodes.ASLAbsX:
+                    DoASLOperation(@operator);
+                    break;
             }
         }
 
         private void DoADCOperation(Operator op)
         {
             byte accum = Accumulator;
-            byte operandValue = 0;
-            switch (op.OpCode)
-            {
-                case OpCodes.ADCIm:
-                    operandValue = op.Operands[0];
-                    break;
-                case OpCodes.ADCZP:
-                    byte address = op.Operands[0];
-                    operandValue = _memory.LoadByteFromMemory(address);
-                    break;
-                case OpCodes.ADCZPX:
-                    address = (byte) (op.Operands[0] + IndexRegisterX);
-                    operandValue = _memory.LoadByteFromMemory(address);
-                    break;
-                case OpCodes.ADCAbs:
-                    int twoBytesAddress = Build2BytesAddress(op);
-                    operandValue = _memory.LoadByteFromMemory(twoBytesAddress);
-                    break;
-                case OpCodes.ADCAbsX:
-                    twoBytesAddress = Build2BytesAddress(op, IndexRegisterX);
-                    operandValue = _memory.LoadByteFromMemory(twoBytesAddress);
-                    break;
-                case OpCodes.ADCAbsY:
-                    twoBytesAddress = Build2BytesAddress(op, IndexRegisterY);
-                    operandValue = _memory.LoadByteFromMemory(twoBytesAddress);
-                    break;
-                case OpCodes.ADCIndX:
-                    address = (byte) (op.Operands[0] + IndexRegisterX);
-                    var bytes = _memory.Load2BytesFromMemory(address);
-                    twoBytesAddress = Build2BytesAddress(bytes[0], bytes[1]);
-                    operandValue = _memory.LoadByteFromMemory(twoBytesAddress);
-                    break;
-                case OpCodes.ADCIndY:
-                    address = op.Operands[0];
-                    bytes = _memory.Load2BytesFromMemory(address);
-                    twoBytesAddress = Build2BytesAddress(bytes[0], bytes[1], IndexRegisterY);
-                    operandValue = _memory.LoadByteFromMemory(twoBytesAddress);
-                    break;
-                default:
-                    throw new InvalidByteCodeException((byte)op.OpCode);
-            }
+            byte operandValue = FetchOperandValue(op);
+
             int intNewValue = accum + operandValue + (CarryFlag ? 1 : 0);
             byte byteNewValue = (byte) intNewValue;
             Accumulator = byteNewValue;
@@ -114,7 +94,88 @@ namespace NESEmul.Core
             bool equalSign = (accum & 0x80 ^ operandValue & 0x80) == 0;
             OverflowFlag = equalSign && ((accum ^ byteNewValue) & 0x80) != 0;
             CarryFlag = intNewValue > byte.MaxValue;
-            NegativeFlag = (intNewValue & 0x80) == 0x80;
+            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+        }
+
+        private void DoANDOperation(Operator op)
+        {
+            byte accum = Accumulator;
+            byte operandValue = FetchOperandValue(op);
+            byte byteNewValue = (byte) (accum & operandValue);
+            Accumulator = byteNewValue;
+            ZeroFlag = byteNewValue == 0;
+            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+        }
+
+        private void DoASLOperation(Operator op)
+        {
+            byte operandValue = FetchOperandValue(op);
+            bool hasHiBit = (operandValue & 0x80) == 0x80;
+            byte byteNewValue = (byte) (operandValue << 1);
+            CarryFlag = hasHiBit;
+            ZeroFlag = byteNewValue == 0;
+            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+            if (op.AddressingMode == AddressingMode.Accumulator)
+                Accumulator = byteNewValue;
+            else
+            {
+                var address = ResolveAddress(op);
+                _memory.StoreByteInMemory(address, byteNewValue);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private byte FetchOperandValue(Operator op)
+        {
+            switch (op.AddressingMode)
+            {
+                case AddressingMode.Accumulator:
+                    return Accumulator;
+                case AddressingMode.Immediate:
+                    return op.Operands[0];
+                case AddressingMode.ZeroPage:
+                case AddressingMode.ZeroPageX:
+                case AddressingMode.ZeroPageY:
+                case AddressingMode.Absolute:
+                case AddressingMode.AbsoluteX:
+                case AddressingMode.AbsoluteY:
+                case AddressingMode.IndexedIndirect:
+                case AddressingMode.IndirectIndexed:
+                    var address = ResolveAddress(op);
+                    return _memory.LoadByteFromMemory(address);
+                default:
+                    throw new InvalidByteCodeException((byte)op.OpCode);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int ResolveAddress(Operator op)
+        {
+            switch (op.AddressingMode)
+            {
+                case AddressingMode.ZeroPage:
+                    return op.Operands[0];
+                case AddressingMode.ZeroPageX:
+                    return (byte) (op.Operands[0] + IndexRegisterX);
+                case AddressingMode.ZeroPageY:
+                    return (byte) (op.Operands[0] + IndexRegisterY);
+                case AddressingMode.Absolute:
+                    return Build2BytesAddress(op);
+                case AddressingMode.AbsoluteX:
+                    return Build2BytesAddress(op, IndexRegisterX);
+                case AddressingMode.AbsoluteY:
+                    return Build2BytesAddress(op, IndexRegisterY);
+                case AddressingMode.IndexedIndirect:
+                    var address = (byte) (op.Operands[0] + IndexRegisterX);
+                    var bytes = _memory.Load2BytesFromMemory(address);
+                    return Build2BytesAddress(bytes[0], bytes[1]);
+                case AddressingMode.IndirectIndexed:
+                    address = op.Operands[0];
+                    bytes = _memory.Load2BytesFromMemory(address);
+                    return Build2BytesAddress(bytes[0], bytes[1], IndexRegisterY);
+                default:
+                    throw new InvalidByteCodeException((byte)op.OpCode);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using NESEmul.Core.Exceptions;
 
@@ -79,6 +80,17 @@ namespace NESEmul.Core
                 case OpCodes.ASLAbsX:
                     DoASLOperation(@operator);
                     break;
+
+                case OpCodes.BPL:
+                case OpCodes.BMI:
+                case OpCodes.BVC:
+                case OpCodes.BVS:
+                case OpCodes.BCC:
+                case OpCodes.BCS:
+                case OpCodes.BNE:
+                case OpCodes.BEQ:
+                    DoBranchOperation(@operator);
+                    break;
             }
         }
 
@@ -124,6 +136,54 @@ namespace NESEmul.Core
             }
         }
 
+        private void DoBranchOperation(Operator op)
+        {
+            byte operandValue = FetchOperandValue(op);
+            bool isNegative = (operandValue & 0x80) == 0x80;
+            ushort offset;
+            if(isNegative)
+            {
+                const int branchOperatorLength = 2;
+                offset = (ushort) (operandValue - 256 - branchOperatorLength); //to compensate Program counter increasing after each operation
+            }
+            else
+            {
+                offset = operandValue;
+            }
+
+            bool performOperation = false;
+            switch (op.OpCode)
+            {
+                case OpCodes.BPL:
+                    performOperation = !NegativeFlag;
+                    break;
+                case OpCodes.BMI:
+                    performOperation = NegativeFlag;
+                    break;
+                case OpCodes.BVC:
+                    performOperation = !OverflowFlag;
+                    break;
+                case OpCodes.BVS:
+                    performOperation = OverflowFlag;
+                    break;
+                case OpCodes.BCC:
+                    performOperation = !CarryFlag;
+                    break;
+                case OpCodes.BCS:
+                    performOperation = CarryFlag;
+                    break;
+                case OpCodes.BNE:
+                    performOperation = !ZeroFlag;
+                    break;
+                case OpCodes.BEQ:
+                    performOperation = ZeroFlag;
+                    break;
+            }
+
+            if (performOperation)
+                ProgramCounter += offset;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte FetchOperandValue(Operator op)
         {
@@ -131,6 +191,7 @@ namespace NESEmul.Core
             {
                 case AddressingMode.Accumulator:
                     return Accumulator;
+                case AddressingMode.Relative:
                 case AddressingMode.Immediate:
                     return op.Operands[0];
                 case AddressingMode.ZeroPage:

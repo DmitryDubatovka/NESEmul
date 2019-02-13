@@ -68,6 +68,16 @@ namespace NESEmul.Core
                 case OpCodes.ASLAbs:
                 case OpCodes.ASLAbsX:
                     return DecodeASLOperator(opCode);
+
+                case OpCodes.BPL:
+                case OpCodes.BMI:
+                case OpCodes.BVC:
+                case OpCodes.BVS:
+                case OpCodes.BCC:
+                case OpCodes.BCS:
+                case OpCodes.BNE:
+                case OpCodes.BEQ:
+                    return new Operator(opCode, new[] {_memory.LoadByteFromMemory(_cpu.ProgramCounter + 1)}, AddressingMode.Relative);
             }
             throw new InvalidByteCodeException(code);
         }

@@ -136,8 +136,45 @@ namespace NESEmul.Core
         //As the program counter itself is incremented during instruction execution by two the effective address range for the target instruction must be with -126 to +129 bytes of the branch.
         #region Branches
 
-        
+        /// <summary>
+        /// Branch on Plus
+        /// </summary>
+        BPL = 0x10,
 
+        /// <summary>
+        /// Branch on Minus
+        /// </summary>
+        BMI = 0x30,
+
+        /// <summary>
+        /// Branch on oVerflow Clear
+        /// </summary>
+        BVC = 0x50,
+
+        /// <summary>
+        /// Branch on oVerflow Set
+        /// </summary>
+        BVS = 0x70,
+
+        /// <summary>
+        /// Branch on Carry Clear
+        /// </summary>
+        BCC = 0x90,
+
+        /// <summary>
+        /// Branch on Carry Set
+        /// </summary>
+        BCS = 0xB0,
+
+        /// <summary>
+        /// Branch on Not Equal
+        /// </summary>
+        BNE = 0xD0,
+
+        /// <summary>
+        /// Branch on EQual
+        /// </summary>
+        BEQ = 0xF0
         #endregion
     }
 }

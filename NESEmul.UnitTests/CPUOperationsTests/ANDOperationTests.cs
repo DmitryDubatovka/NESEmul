@@ -7,9 +7,9 @@ namespace NESEmul.UnitTests.CPUOperationTests
     public class ANDOperationTests : OperationBaseTests
     {
         [Test]
-        public void ANDImTest()
+        public void ANDImmTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ANDIm);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.ANDImm);
             CPU.Accumulator = 0xFF;
             Memory.StoreByteInMemory(1, 0x80);
             CPU.Do();

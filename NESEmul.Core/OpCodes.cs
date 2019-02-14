@@ -13,7 +13,7 @@ namespace NESEmul.Core
         /// <summary>
         /// Immediate addressing mode
         /// </summary>
-        ADCIm = 0x69,
+        ADCImm = 0x69,
         
         /// <summary>
         /// Zero Page addressing mode
@@ -52,13 +52,13 @@ namespace NESEmul.Core
 
         #endregion
 
-        //bitwise AND with accumulator
+        //Bitwise AND with accumulator
         #region AND
 
         /// <summary>
         /// Immediate addressing mode
         /// </summary>
-        ANDIm = 0x29,
+        ANDImm = 0x29,
 
         /// <summary>
         /// Zero page addressing mode
@@ -179,10 +179,9 @@ namespace NESEmul.Core
 
         //CMP (CoMPare accumulator)  If the value in the accumulator is equal or greater than the compared value, the Carry will be set.
         //The equal (Z) and sign (S) flags will be set based on equality or lack thereof and the sign (i.e. A>=$80) of the accumulator.
-
         #region CMP
 
-        CMPIm = 0xC9,
+        CMPImm = 0xC9,
 
         CMPZP = 0xC5,
 
@@ -196,7 +195,64 @@ namespace NESEmul.Core
 
         CMPIndX = 0xC1,
 
-        CMPIndY = 0xD1
+        CMPIndY = 0xD1,
+
+        #endregion
+
+        //ComPare X register. Operation and flag results are identical to equivalent mode accumulator CMP ops.
+        #region CPX
+
+        CPXImm = 0xE0,
+        CPXZP = 0xE4,
+        CPXAbs = 0xEC,
+
+        #endregion
+
+        //ComPare Y register. Operation and flag results are identical to equivalent mode accumulator CMP ops.
+        #region CPY
+
+        CPYImm = 0xC0,
+        CPYZP = 0xC4,
+        CPYAbs = 0xCC,
+
+        #endregion
+
+        #region Flags
+
+        /// <summary>
+        /// Clear Carry flag
+        /// </summary>
+        CLC = 0x18,
+
+        /// <summary>
+        /// Clear Decimal Mode
+        /// </summary>
+        CLD = 0xD8,
+
+        /// <summary>
+        /// Clear Interrupt Disable
+        /// </summary>
+        CLI = 0x58,
+
+        /// <summary>
+        /// Clear Overflow flag
+        /// </summary>
+        CLV = 0xB8,
+
+        /// <summary>
+        /// Set Carry flag
+        /// </summary>
+        SEC = 0x38,
+
+        /// <summary>
+        /// Set Interrupt Disable
+        /// </summary>
+        SEI = 0x78,
+
+        /// <summary>
+        /// Set Decimal Mode
+        /// </summary>
+        SED = 0xF8
 
         #endregion
     }

@@ -20,6 +20,7 @@ namespace NESEmul.Core
         public bool BreakCommand { get; set; }
         public bool OverflowFlag { get; set; }
         public bool NegativeFlag { get; set; }
+        public bool InterruptDisable { get; set; }
 
         public CPU(ushort programCounter, byte stackPointer, Memory memory)
         {
@@ -50,7 +51,7 @@ namespace NESEmul.Core
                     BreakCommand = true;
                     break;
 
-                case OpCodes.ADCIm:
+                case OpCodes.ADCImm:
                 case OpCodes.ADCAbs:
                 case OpCodes.ADCZP:
                 case OpCodes.ADCAbsX:
@@ -62,7 +63,7 @@ namespace NESEmul.Core
                     break;
 
                 case OpCodes.ANDAbs:
-                case OpCodes.ANDIm:
+                case OpCodes.ANDImm:
                 case OpCodes.ANDZP:
                 case OpCodes.ANDZPX:
                 case OpCodes.ANDAbsX:
@@ -92,14 +93,36 @@ namespace NESEmul.Core
                     break;
 
                 case OpCodes.CMPAbs:
-                case OpCodes.CMPIm:
+                case OpCodes.CMPImm:
                 case OpCodes.CMPZP:
                 case OpCodes.CMPZPX:
                 case OpCodes.CMPAbsX:
                 case OpCodes.CMPAbsY:
                 case OpCodes.CMPIndX:
                 case OpCodes.CMPIndY:
-                    DoCMPOperation(@operator);
+                    DoCMPOperation(@operator, Accumulator);
+                    break;
+                
+                case OpCodes.CPXAbs:
+                case OpCodes.CPXImm:
+                case OpCodes.CPXZP:
+                    DoCMPOperation(@operator, IndexRegisterX);
+                    break;
+                
+                case OpCodes.CPYAbs:
+                case OpCodes.CPYImm:
+                case OpCodes.CPYZP:
+                    DoCMPOperation(@operator, IndexRegisterY);
+                    break;
+
+                case OpCodes.CLC:
+                case OpCodes.CLD:
+                case OpCodes.CLI:
+                case OpCodes.CLV:
+                case OpCodes.SEC:
+                case OpCodes.SED:
+                case OpCodes.SEI:
+                    DoFlagOperation(@operator);
                     break;
             }
         }
@@ -146,12 +169,41 @@ namespace NESEmul.Core
             }
         }
 
-        private void DoCMPOperation(Operator op)
+        private void DoCMPOperation(Operator op, byte registerValue)
         {
             byte operandValue = FetchOperandValue(op);
-            CarryFlag = Accumulator >= operandValue;
-            ZeroFlag = Accumulator == operandValue;
-            NegativeFlag = ((Accumulator - operandValue) & 0x80) == 0x80;
+            CarryFlag = registerValue >= operandValue;
+            ZeroFlag = registerValue == operandValue;
+            NegativeFlag = ((registerValue - operandValue) & 0x80) == 0x80;
+        }
+
+        private void DoFlagOperation(Operator op)
+        {
+            switch (op.OpCode)
+            {
+                case OpCodes.CLC:
+                    CarryFlag = false;
+                    break;
+                case OpCodes.CLD:
+                    DecimalMode = false;
+                    break;
+                case OpCodes.CLI:
+                    InterruptDisable = false;
+                    break;
+                case OpCodes.CLV:
+                    OverflowFlag = false;
+                    break;
+                case OpCodes.SEC:
+                    CarryFlag = true;
+                    break;
+                case OpCodes.SED:
+                    DecimalMode = true;
+                    break;
+                case OpCodes.SEI:
+                    InterruptDisable = true;
+                    break;
+            }
+            
         }
 
         private void DoBranchOperation(Operator op)

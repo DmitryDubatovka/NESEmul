@@ -7,10 +7,10 @@ namespace NESEmul.UnitTests.CPUOperationTests
     [TestFixture]
     public class ADCOperationTests : OperationBaseTests
     {
-        [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.ADCImTestCases))]
-        public void ADCImTest(byte accumValue, byte value, byte resultValue, bool carryFlagResult, bool zeroFlagResult, bool overflowFlagResult, bool negativeFlagResult)
+        [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.ADCImmTestCases))]
+        public void ADCImmTest(byte accumValue, byte value, byte resultValue, bool carryFlagResult, bool zeroFlagResult, bool overflowFlagResult, bool negativeFlagResult)
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCIm);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCImm);
             CPU.Accumulator = accumValue;
             Memory.StoreByteInMemory(1, value);
             CPU.Do();
@@ -22,9 +22,9 @@ namespace NESEmul.UnitTests.CPUOperationTests
         }
 
         [Test]
-        public void ADCImWithCarryFlagTest()
+        public void ADCImmWithCarryFlagTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCIm);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCImm);
             CPU.CarryFlag = true;
             CPU.Accumulator = 0x1;
             Memory.StoreByteInMemory(1, 0x2);

@@ -5,7 +5,7 @@ namespace NESEmul.UnitTests.TestCases
 {
     public class CPUOperationsTestCases
     {
-        public static IEnumerable<TestCaseData> ADCImTestCases()
+        public static IEnumerable<TestCaseData> ADCImmTestCases()
         {
             yield return new TestCaseData((byte)0x1, (byte)0x2, (byte)0x3, false, false, false, false);
             yield return new TestCaseData((byte)0xFF, (byte)0x1, (byte)0x0, true, true, false, false);
@@ -13,11 +13,25 @@ namespace NESEmul.UnitTests.TestCases
             yield return new TestCaseData((byte)0xFE, (byte)0x80, (byte)0x7E, true, false, true, false);
         }
 
-        public static IEnumerable<TestCaseData> CMPImTestCases()
+        public static IEnumerable<TestCaseData> CMPImmTestCases()
         {
-            yield return new TestCaseData((byte)0x10, (byte)0x5, (byte)0x10, true, false, false);
-            yield return new TestCaseData((byte)0x10, (byte)0x10, (byte)0x10, true, true, false);
-            yield return new TestCaseData((byte)0x1, (byte)0x10, (byte)0x1, false, false, true);
+            yield return new TestCaseData((byte)0x10, (byte)0x5, true, false, false);
+            yield return new TestCaseData((byte)0x10, (byte)0x10, true, true, false);
+            yield return new TestCaseData((byte)0x1, (byte)0x10, false, false, true);
+        }
+        
+        public static IEnumerable<TestCaseData> CPXAbsTestCases()
+        {
+            yield return new TestCaseData((byte)0x10, (byte)0x5, true, false, false);
+            yield return new TestCaseData((byte)0x10, (byte)0x10, true, true, false);
+            yield return new TestCaseData((byte)0x1, (byte)0x10, false, false, true);
+        }
+        
+        public static IEnumerable<TestCaseData> CPYZPTestCases()
+        {
+            yield return new TestCaseData((byte)0x10, (byte)0x5, true, false, false);
+            yield return new TestCaseData((byte)0x10, (byte)0x10, true, true, false);
+            yield return new TestCaseData((byte)0x0, (byte)0x0, true, true, false);
         }
     }
 }

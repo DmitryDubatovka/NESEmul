@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 using NESEmul.Core.Exceptions;
 
@@ -91,6 +90,17 @@ namespace NESEmul.Core
                 case OpCodes.BEQ:
                     DoBranchOperation(@operator);
                     break;
+
+                case OpCodes.CMPAbs:
+                case OpCodes.CMPIm:
+                case OpCodes.CMPZP:
+                case OpCodes.CMPZPX:
+                case OpCodes.CMPAbsX:
+                case OpCodes.CMPAbsY:
+                case OpCodes.CMPIndX:
+                case OpCodes.CMPIndY:
+                    DoCMPOperation(@operator);
+                    break;
             }
         }
 
@@ -136,6 +146,14 @@ namespace NESEmul.Core
             }
         }
 
+        private void DoCMPOperation(Operator op)
+        {
+            byte operandValue = FetchOperandValue(op);
+            CarryFlag = Accumulator >= operandValue;
+            ZeroFlag = Accumulator == operandValue;
+            NegativeFlag = ((Accumulator - operandValue) & 0x80) == 0x80;
+        }
+
         private void DoBranchOperation(Operator op)
         {
             byte operandValue = FetchOperandValue(op);
@@ -143,8 +161,7 @@ namespace NESEmul.Core
             ushort offset;
             if(isNegative)
             {
-                const int branchOperatorLength = 2;
-                offset = (ushort) (operandValue - 256 - branchOperatorLength); //to compensate Program counter increasing after each operation
+                offset = (ushort) (operandValue - 256);
             }
             else
             {

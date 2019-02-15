@@ -407,5 +407,54 @@ namespace NESEmul.Core
         JmpInd = 0x6C,
 
         #endregion
+
+        //Loads a byte of memory into the accumulator setting the zero and negative flags as appropriate.
+        #region LDA
+
+        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        LDAImm = 0xA9,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        LDAZP = 0xA5,
+        
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        LDAZPX = 0xB5,
+        
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        LDAAbs = 0xAD,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        LDAAbsX = 0xBD,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        LDAAbsY = 0xB9,
+
+        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        LDAIndX = 0xA1,
+
+        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        LDAIndY = 0xB1,
+
+        #endregion
+
+        //Loads a byte of memory into the X register setting the zero and negative flags as appropriate.
+        #region LDX
+
+        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        LDXImm = 0xA2,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        LDXZP = 0xA6,
+        
+        [OpCodesAddressingMode(AddressingMode.ZeroPageY)]
+        LDXZPY = 0xB6,
+        
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        LDXAbs = 0xAE,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        LDXAbsY = 0xBE,
+
+        #endregion
     }
 }

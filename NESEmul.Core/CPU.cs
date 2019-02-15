@@ -214,6 +214,25 @@ namespace NESEmul.Core
                 case OpCodes.EORIndY:
                     DoEOROperation(@operator);
                     break;
+                
+                case OpCodes.LDAImm:
+                case OpCodes.LDAZP:
+                case OpCodes.LDAZPX:
+                case OpCodes.LDAAbs:
+                case OpCodes.LDAAbsX:
+                case OpCodes.LDAAbsY:
+                case OpCodes.LDAIndX:
+                case OpCodes.LDAIndY:
+                    DoLDAOperation(@operator);
+                    break;
+                
+                case OpCodes.LDXImm:
+                case OpCodes.LDXZP:
+                case OpCodes.LDXZPY:
+                case OpCodes.LDXAbs:
+                case OpCodes.LDXAbsY:
+                    DoLDXOperation(@operator);
+                    break;
 
                 case OpCodes.INCZP:
                 case OpCodes.INCZPX:
@@ -456,10 +475,24 @@ namespace NESEmul.Core
 
         private void DoRTSOperation()
         {
-            //var loByte = Pop();
-            //var hiByte = Pop();
             var address = Build2BytesAddress(Pop(), Pop()); //additional byte offset is added in the main loop by ProgramCounter += @operator.Length;
             ProgramCounter = (ushort) address;
+        }
+
+        private void DoLDAOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            Accumulator = operandValue;
+            ZeroFlag = Accumulator == 0;
+            SetNegativeFlag(Accumulator);
+        }
+        
+        private void DoLDXOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            IndexRegisterX = operandValue;
+            ZeroFlag = IndexRegisterX == 0;
+            SetNegativeFlag(IndexRegisterX);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -71,6 +71,8 @@
     <Compile Include="CPUOperationsTests\EOROperationTests.cs" />
     <Compile Include="CPUOperationsTests\INCOperationTests.cs" />
     <Compile Include="CPUOperationsTests\JMPOperationTests.cs" />
+    <Compile Include="CPUOperationsTests\LDAOperationTests.cs" />
+    <Compile Include="CPUOperationsTests\LDXOperationTests.cs" />
     <Compile Include="CPUOperationsTests\OperationBaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCases\CPUOperationsTestCases.cs" />

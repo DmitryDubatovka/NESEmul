@@ -9,23 +9,46 @@ namespace NESEmul.Core
         private byte _stackPointer;
         private readonly Memory _memory;
         private readonly OpCodesDecoder _decoder;
+        private const short StackMemoryOffset = 0x100;
 
         public byte Accumulator { get; set; }
         public byte IndexRegisterX { get; set; }
         public byte IndexRegisterY { get; set; }
         
+        /// <summary>
+        /// 0th bit
+        /// </summary>
         public bool CarryFlag { get; set; }
+        /// <summary>
+        /// 1st bit
+        /// </summary>
         public bool ZeroFlag { get; set; }
-        public bool DecimalMode { get; set; }
-        public bool BreakCommand { get; set; }
-        public bool OverflowFlag { get; set; }
-        public bool NegativeFlag { get; set; }
+        /// <summary>
+        /// 2nd bit
+        /// </summary>
         public bool InterruptDisable { get; set; }
+        /// <summary>
+        /// 3rd bit
+        /// </summary>
+        public bool DecimalMode { get; set; }
+        /// <summary>
+        /// 4th bit
+        /// </summary>
+        public bool BreakCommand { get; set; }
+        /// <summary>
+        /// 6th bit
+        /// </summary>
+        public bool OverflowFlag { get; set; }
+        /// <summary>
+        /// 7th bit
+        /// </summary>
+        public bool NegativeFlag { get; set; }
+        
 
-        public CPU(ushort programCounter, byte stackPointer, Memory memory)
+        public CPU(ushort programCounter, Memory memory)
         {
             ProgramCounter = programCounter;
-            _stackPointer = stackPointer;
+            _stackPointer = 0xFF;
             _memory = memory;
             _decoder = new OpCodesDecoder(this, memory);
 
@@ -43,12 +66,59 @@ namespace NESEmul.Core
             }
         }
 
+        private void Push(byte value)
+        {
+            var address = StackMemoryOffset + _stackPointer;
+            _memory.StoreByteInMemory(address, value);
+            _stackPointer--;
+        }
+
+        private void PushFlags()
+        {
+            byte value = (byte) (NegativeFlag ? 1 : 0);
+            value <<= 1;
+            value += (byte) (OverflowFlag ? 1 : 0);
+            value <<= 1;
+            value += 1; // unused bit
+            value <<= 1;
+            value += (byte) (BreakCommand ? 1 : 0);
+            value <<= 1;
+            value += (byte) (DecimalMode ? 1 : 0);
+            value <<= 1;
+            value += (byte) (InterruptDisable ? 1 : 0);
+            value <<= 1;
+            value += (byte) (ZeroFlag ? 1 : 0);
+            value <<= 1;
+            value += (byte) (CarryFlag ? 1 : 0);
+            Push(value);
+        }
+
+        private void PopFlags()
+        {
+            byte value = Pop();
+            NegativeFlag = (value & 0x80) != 0;
+            OverflowFlag = (value & 0x40) != 0;
+            BreakCommand = (value & 0x10) != 0;
+            DecimalMode = (value & 0x08) != 0;
+            InterruptDisable = (value & 0x04) != 0;
+            ZeroFlag = (value & 0x02) != 0;
+            CarryFlag = (value & 0x01) != 0;
+        }
+
+        private byte Pop()
+        {
+            var address = StackMemoryOffset + ++_stackPointer;
+            return _memory.LoadByteFromMemory(address);
+        }
+
         private void DoOperator(Operator @operator)
         {
             switch (@operator.OpCode)
             {
                 case OpCodes.BRK:
                     BreakCommand = true;
+                    break;
+                case OpCodes.NOP:
                     break;
 
                 case OpCodes.ADCImm:
@@ -124,6 +194,26 @@ namespace NESEmul.Core
                 case OpCodes.SEI:
                     DoFlagOperation(@operator);
                     break;
+                
+                case OpCodes.DECZP:
+                case OpCodes.DECZPX:
+                case OpCodes.DECAbs:
+                case OpCodes.DECAbsX:
+                case OpCodes.DEX:
+                case OpCodes.DEY:
+                    DoDECOperation(@operator);
+                    break;
+
+                case OpCodes.EORImm:
+                case OpCodes.EORZP:
+                case OpCodes.EORZPX:
+                case OpCodes.EORAbs:
+                case OpCodes.EORAbsX:
+                case OpCodes.EORAbsY:
+                case OpCodes.EORIndX:
+                case OpCodes.EORIndY:
+                    DoEOROperation(@operator);
+                    break;
             }
         }
 
@@ -139,7 +229,7 @@ namespace NESEmul.Core
             bool equalSign = (accum & 0x80 ^ operandValue & 0x80) == 0;
             OverflowFlag = equalSign && ((accum ^ byteNewValue) & 0x80) != 0;
             CarryFlag = intNewValue > byte.MaxValue;
-            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+            SetNegativeFlag(byteNewValue);
         }
 
         private void DoANDOperation(Operator op)
@@ -149,7 +239,7 @@ namespace NESEmul.Core
             byte byteNewValue = (byte) (accum & operandValue);
             Accumulator = byteNewValue;
             ZeroFlag = byteNewValue == 0;
-            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+            SetNegativeFlag(byteNewValue);
         }
 
         private void DoASLOperation(Operator op)
@@ -159,7 +249,7 @@ namespace NESEmul.Core
             byte byteNewValue = (byte) (operandValue << 1);
             CarryFlag = hasHiBit;
             ZeroFlag = byteNewValue == 0;
-            NegativeFlag = (byteNewValue & 0x80) == 0x80;
+            SetNegativeFlag(byteNewValue);
             if (op.AddressingMode == AddressingMode.Accumulator)
                 Accumulator = byteNewValue;
             else
@@ -174,7 +264,7 @@ namespace NESEmul.Core
             byte operandValue = FetchOperandValue(op);
             CarryFlag = registerValue >= operandValue;
             ZeroFlag = registerValue == operandValue;
-            NegativeFlag = ((registerValue - operandValue) & 0x80) == 0x80;
+            SetNegativeFlag(registerValue - operandValue);
         }
 
         private void DoFlagOperation(Operator op)
@@ -253,6 +343,37 @@ namespace NESEmul.Core
                 ProgramCounter += offset;
         }
 
+        private void DoDECOperation(Operator op)
+        {
+            byte operandValue = 0;
+            if (op.OpCode == OpCodes.DEX)
+                operandValue = IndexRegisterX;
+            else if (op.OpCode == OpCodes.DEY)
+                operandValue = IndexRegisterY;
+            else
+                operandValue = FetchOperandValue(op);
+            operandValue--;
+            ZeroFlag = operandValue == 0;
+            SetNegativeFlag(operandValue);
+            if (op.OpCode == OpCodes.DEX)
+                IndexRegisterX = operandValue;
+            else if (op.OpCode == OpCodes.DEY)
+                IndexRegisterY = operandValue;
+            else
+            {
+                var address = ResolveAddress(op);
+                _memory.StoreByteInMemory(address, operandValue);
+            }
+        }
+
+        private void DoEOROperation(Operator op)
+        {
+            byte operandValue = FetchOperandValue(op);
+            Accumulator ^= operandValue;
+            ZeroFlag = Accumulator == 0;
+            SetNegativeFlag(Accumulator);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte FetchOperandValue(Operator op)
         {
@@ -319,6 +440,12 @@ namespace NESEmul.Core
         private static int Build2BytesAddress(byte hiByte, byte lowByte, byte additionalOffset = 0)
         {
             return ((lowByte << 8) + hiByte + additionalOffset) & 0xFFFF;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetNegativeFlag(int value)
+        {
+            NegativeFlag = (value & 0x80) == 0x80;
         }
     }
 }

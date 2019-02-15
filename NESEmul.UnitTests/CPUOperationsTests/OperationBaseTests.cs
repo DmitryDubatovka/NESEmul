@@ -12,7 +12,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         protected void Setup()
         {
             Memory = new Memory();
-            CPU = new CPU(0, 0, Memory);
+            CPU = new CPU(0, Memory);
         }
     }
 }

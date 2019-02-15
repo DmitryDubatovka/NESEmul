@@ -45,6 +45,7 @@
     <Compile Include="Exceptions\MemoryOutOfRangeException.cs" />
     <Compile Include="Memory.cs" />
     <Compile Include="OpCodes.cs" />
+    <Compile Include="OpCodesAddressingModeAttribute.cs" />
     <Compile Include="OpCodesDecoder.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,10 +1,11 @@
 ﻿using NESEmul.Core;
+using NESEmul.Core.Exceptions;
 using NUnit.Framework;
 
 namespace NESEmul.UnitTests.CPUOperationTests
 {
     [TestFixture]
-    public class FlagsOperationsTests : OperationBaseTests
+    public class CommonOperationsTests : OperationBaseTests
     {
         [Test]
         public void FlagsOperationsTest()
@@ -30,6 +31,22 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Assert.That(CPU.DecimalMode, Is.EqualTo(false));
             Assert.That(CPU.InterruptDisable, Is.EqualTo(false));
             Assert.That(CPU.OverflowFlag, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void NOPOperationTest()
+        {
+            Memory.StoreByteInMemory(0, (byte)OpCodes.NOP);
+            Memory.StoreByteInMemory(1, (byte)OpCodes.NOP);
+            CPU.Do();
+            Assert.That(CPU.ProgramCounter, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void FakeOperatorTest()
+        {
+            Memory.StoreByteInMemory(0, 0xFF);
+            Assert.Catch<InvalidByteCodeException>(() => CPU.Do());
         }
     }
 }

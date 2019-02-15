@@ -14,6 +14,16 @@ namespace NESEmul.Core
         [OpCodesAddressingMode(AddressingMode.Implicit)]
         NOP = 0xEA,
 
+        //Jump to Subroutine. The JSR instruction pushes the address (minus one) of the return point on to the stack and then sets the program counter to the target memory address.
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        JSR = 0x20,
+
+        /// <summary>
+        /// RTS pulls the top two bytes off the stack (low byte first) and transfers program control to that address+1.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        RTS = 0x60,
+
         //Add with Carry
         #region ADC
 
@@ -394,7 +404,7 @@ namespace NESEmul.Core
         JmpAbs = 0x4C,
 
         [OpCodesAddressingMode(AddressingMode.Indirect)]
-        JmpInd = 0x6C
+        JmpInd = 0x6C,
 
         #endregion
     }

@@ -33,5 +33,23 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Assert.That(CPU.IndexRegisterY, Is.EqualTo(0x2));
             Assert.That(CPU.ProgramCounter, Is.EqualTo(0x0405));
         }
+
+        [Test]
+        public void JSRAndRTSTest()
+        {
+            var cpu = new CPU(0x0600, Memory) {IndexRegisterX = 0x1, IndexRegisterY = 0x5};
+            Memory.StoreByteInMemory(0x0600, (byte)OpCodes.NOP);
+            Memory.StoreByteInMemory(0x0601, (byte)OpCodes.NOP);
+            Memory.StoreByteInMemory(0x0602, (byte)OpCodes.JSR);
+            Memory.StoreByteInMemory(0x0603, 0x09);
+            Memory.StoreByteInMemory(0x0604, 0x06);
+            Memory.StoreByteInMemory(0x0605, (byte)OpCodes.DEY);
+            Memory.StoreByteInMemory(0x0606, (byte)OpCodes.BRK);
+            Memory.StoreByteInMemory(0x0609, (byte)OpCodes.INX);
+            Memory.StoreByteInMemory(0x060A, (byte)OpCodes.RTS);
+            cpu.Do();
+            Assert.That(cpu.IndexRegisterX, Is.EqualTo(0x2));
+            Assert.That(cpu.IndexRegisterY, Is.EqualTo(0x4));
+        }
     }
 }

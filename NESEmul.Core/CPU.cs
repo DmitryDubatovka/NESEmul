@@ -228,6 +228,14 @@ namespace NESEmul.Core
                 case OpCodes.JmpAbs:
                     DoJMPOperation(@operator);
                     break;
+
+                case OpCodes.JSR:
+                    DoJSROperation(@operator);
+                    break;
+
+                case OpCodes.RTS:
+                    DoRTSOperation();
+                    break;
             }
         }
 
@@ -432,6 +440,26 @@ namespace NESEmul.Core
             }
 
             ProgramCounter = newProgramCounter;
+        }
+
+        private void DoJSROperation(Operator op)
+        {
+            var currentPC = ProgramCounter;
+            currentPC += (ushort)(op.Length - 1);
+            byte hiByte = (byte) ((currentPC & 0xFF00) >> 8);
+            byte loByte = (byte) (currentPC & 0xFF);
+            Push(hiByte);
+            Push(loByte);
+            var address = ResolveAddress(op);
+            ProgramCounter = (ushort) (address - op.Length);
+        }
+
+        private void DoRTSOperation()
+        {
+            //var loByte = Pop();
+            //var hiByte = Pop();
+            var address = Build2BytesAddress(Pop(), Pop()); //additional byte offset is added in the main loop by ProgramCounter += @operator.Length;
+            ProgramCounter = (ushort) address;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

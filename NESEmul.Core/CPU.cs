@@ -214,6 +214,20 @@ namespace NESEmul.Core
                 case OpCodes.EORIndY:
                     DoEOROperation(@operator);
                     break;
+
+                case OpCodes.INCZP:
+                case OpCodes.INCZPX:
+                case OpCodes.INCAbs:
+                case OpCodes.INCAbsX:
+                case OpCodes.INX:
+                case OpCodes.INY:
+                    DoINCOperation(@operator);
+                    break;
+
+                case OpCodes.JmpInd:
+                case OpCodes.JmpAbs:
+                    DoJMPOperation(@operator);
+                    break;
             }
         }
 
@@ -345,7 +359,7 @@ namespace NESEmul.Core
 
         private void DoDECOperation(Operator op)
         {
-            byte operandValue = 0;
+            byte operandValue;
             if (op.OpCode == OpCodes.DEX)
                 operandValue = IndexRegisterX;
             else if (op.OpCode == OpCodes.DEY)
@@ -365,6 +379,29 @@ namespace NESEmul.Core
                 _memory.StoreByteInMemory(address, operandValue);
             }
         }
+        
+        private void DoINCOperation(Operator op)
+        {
+            byte operandValue;
+            if (op.OpCode == OpCodes.INX)
+                operandValue = IndexRegisterX;
+            else if (op.OpCode == OpCodes.INY)
+                operandValue = IndexRegisterY;
+            else
+                operandValue = FetchOperandValue(op);
+            operandValue++;
+            ZeroFlag = operandValue == 0;
+            SetNegativeFlag(operandValue);
+            if (op.OpCode == OpCodes.INX)
+                IndexRegisterX = operandValue;
+            else if (op.OpCode == OpCodes.INY)
+                IndexRegisterY = operandValue;
+            else
+            {
+                var address = ResolveAddress(op);
+                _memory.StoreByteInMemory(address, operandValue);
+            }
+        }
 
         private void DoEOROperation(Operator op)
         {
@@ -372,6 +409,29 @@ namespace NESEmul.Core
             Accumulator ^= operandValue;
             ZeroFlag = Accumulator == 0;
             SetNegativeFlag(Accumulator);
+        }
+
+        private void DoJMPOperation(Operator op)
+        {
+            ushort newProgramCounter;
+            if (op.OpCode == OpCodes.JmpAbs)
+            {
+                var address = ResolveAddress(op);
+                newProgramCounter = (ushort) (address - op.Length);
+            }
+            else if(op.OpCode == OpCodes.JmpInd)
+            {
+                var address = ResolveAddress(op);
+                var bytes = _memory.Load2BytesFromMemory(address);
+                address = Build2BytesAddress(bytes[0], bytes[1]);
+                newProgramCounter = (ushort) (address - op.Length);
+            }
+            else
+            {
+                throw new InvalidByteCodeException((byte) op.OpCode);
+            }
+
+            ProgramCounter = newProgramCounter;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -416,9 +476,12 @@ namespace NESEmul.Core
                     return Build2BytesAddress(op, IndexRegisterX);
                 case AddressingMode.AbsoluteY:
                     return Build2BytesAddress(op, IndexRegisterY);
+                case AddressingMode.Indirect:
+                    var bytes = _memory.Load2BytesFromMemory(op.Operands[0]);
+                    return Build2BytesAddress(bytes[0], bytes[1]);
                 case AddressingMode.IndexedIndirect:
                     var address = (byte) (op.Operands[0] + IndexRegisterX);
-                    var bytes = _memory.Load2BytesFromMemory(address);
+                    bytes = _memory.Load2BytesFromMemory(address);
                     return Build2BytesAddress(bytes[0], bytes[1]);
                 case AddressingMode.IndirectIndexed:
                     address = op.Operands[0];

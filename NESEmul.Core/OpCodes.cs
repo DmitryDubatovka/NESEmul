@@ -360,7 +360,41 @@ namespace NESEmul.Core
         EORIndX = 0x41,
 
         [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
-        EORIndY = 0x51
+        EORIndY = 0x51,
+
+        #endregion
+
+        //Adds one to the value held at a specified memory location setting the zero and negative flags as appropriate.
+        #region INC
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        INCZP = 0xE6,
+        
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        INCZPX = 0xF6,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        INCAbs = 0xEE,
+        
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        INCAbsX = 0xFE,
+
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        INX = 0xE8,
+
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        INY = 0xC8,
+
+        #endregion
+
+        //Sets the program counter to the address specified by the operand.
+        #region JMP
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        JmpAbs = 0x4C,
+
+        [OpCodesAddressingMode(AddressingMode.Indirect)]
+        JmpInd = 0x6C
 
         #endregion
     }

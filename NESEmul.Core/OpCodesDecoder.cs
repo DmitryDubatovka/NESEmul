@@ -76,6 +76,7 @@ namespace NESEmul.Core
                     case AddressingMode.Absolute:
                     case AddressingMode.AbsoluteX:
                     case AddressingMode.AbsoluteY:
+                    case AddressingMode.Indirect:
                         return new Operator(pair.OpCode, _memory.Load2BytesFromMemory(_cpu.ProgramCounter + 1),
                             pair.AddressingMode);
                     default:

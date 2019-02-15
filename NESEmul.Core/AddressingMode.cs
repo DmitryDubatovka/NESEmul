@@ -66,6 +66,14 @@
         /// <summary>
         /// Relative addressing mode is used by branch instructions
         /// </summary>
-        Relative = 12
+        Relative = 12,
+
+        /// <summary>
+        /// JMP is the only 6502 instruction to support indirection. The instruction contains a 16 bit address which identifies the location of the
+        /// least significant byte of another 16 bit memory address which is the real target of the instruction.
+        /// For example if location $0120 contains $FC and location $0121 contains $BA then the instruction JMP ($0120) will cause the next instruction execution to occur
+        /// at $BAFC (e.g. the contents of $0120 and $0121).
+        /// </summary>
+        Indirect = 13
     }
 }

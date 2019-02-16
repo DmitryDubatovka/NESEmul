@@ -4,14 +4,12 @@ using NUnit.Framework;
 namespace NESEmul.UnitTests.CPUOperationTests
 {
     [TestFixture]
-    public class DECOperationTests : BranchOperationTests
+    public class DECOperationTests : OperationBaseTests
     {
         [Test]
         public void DECZPOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.DECZP);
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x10);
+            InitZPMode(OpCodes.DECZP, 0x10);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0xF);
             Assert.That(val, Is.EqualTo(0xF));
@@ -22,10 +20,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void DECZPXOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.DECZPX);
-            CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0xE);
-            Memory.StoreByteInMemory(0xF, 0x1);
+            InitZPXMode(OpCodes.DECZPX, 0x1);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0xF);
             Assert.That(val, Is.EqualTo(0));
@@ -36,10 +31,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void DECAbsOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.DECAbs);
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, 0x81);
+            InitAbsMode(OpCodes.DECAbs, 0x81);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0x0102);
             Assert.That(val, Is.EqualTo(0x80));
@@ -50,13 +42,9 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void DECAbsXOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.DECAbsX);
-            CPU.IndexRegisterX = 0x01;
-            Memory.StoreByteInMemory(1, 0x01);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, 0x80);
+            InitAbsXMode(OpCodes.DECAbsX, 0x80);
             CPU.Do();
-            var val = Memory.LoadByteFromMemory(0x0102);
+            var val = Memory.LoadByteFromMemory(0x0103);
             Assert.That(val, Is.EqualTo(0x7F));
             Assert.That(CPU.NegativeFlag, Is.EqualTo(false));
             Assert.That(CPU.ZeroFlag, Is.EqualTo(false));

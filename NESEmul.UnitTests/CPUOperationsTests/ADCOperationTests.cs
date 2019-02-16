@@ -39,10 +39,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void ADCZPTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCZP);
+            InitZPMode(OpCodes.ADCZP, 0x3);
             CPU.Accumulator = 0x1;
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x3);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
         }
@@ -50,11 +48,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void ADCZPXTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCZPX);
+            InitZPXMode(OpCodes.ADCZPX, 0x3);
             CPU.Accumulator = 0x1;
-            CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0xE);
-            Memory.StoreByteInMemory(0xF, 0x3);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
         }
@@ -62,11 +57,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void ADCAbsTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCAbs);
+            InitAbsMode(OpCodes.ADCAbs, 0x3);
             CPU.Accumulator = 0x1;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, 0x3);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
         }

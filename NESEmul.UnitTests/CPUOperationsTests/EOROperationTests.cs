@@ -21,10 +21,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void EORZPTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.EORZP);
+            InitZPMode(OpCodes.EORZP, 0x1);
             CPU.Accumulator = 0x1;
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x1);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x0));
             Assert.That(CPU.ZeroFlag, Is.EqualTo(true), "Zero flag");
@@ -34,11 +32,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void EORZPXTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.EORZPX);
+            InitZPXMode(OpCodes.EORZPX, 0x1);
             CPU.Accumulator = 0x81;
-            CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0xE);
-            Memory.StoreByteInMemory(0xF, 0x1);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x80));
             Assert.That(CPU.ZeroFlag, Is.EqualTo(false), "Zero flag");

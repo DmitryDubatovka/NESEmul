@@ -10,10 +10,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         public void JmpAbsTest()
         {
             CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(0, (byte)OpCodes.JmpAbs);
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x03);
-            Memory.StoreByteInMemory(0x0302, (byte)OpCodes.INX);
+            InitAbsMode(OpCodes.JmpAbs, (byte)OpCodes.INX, 0, 0x03);
             CPU.Do();
             Assert.That(CPU.IndexRegisterX, Is.EqualTo(0x2));
             Assert.That(CPU.ProgramCounter, Is.EqualTo(0x0304));

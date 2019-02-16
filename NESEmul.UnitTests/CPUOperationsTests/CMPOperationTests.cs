@@ -23,11 +23,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.CPXAbsTestCases))]
         public void CPXAbsTest(byte xRegisterValue, byte operandValue, bool carryFlag, bool zeroFlag, bool negativeFlag)
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.CPXAbs);
+            InitAbsMode(OpCodes.CPXAbs, operandValue);
             CPU.IndexRegisterX = xRegisterValue;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, operandValue);
             CPU.Do();
             Assert.That(CPU.IndexRegisterX, Is.EqualTo(xRegisterValue));
             Assert.That(CPU.CarryFlag, Is.EqualTo(carryFlag), "Carry flag");
@@ -38,10 +35,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.CPYZPTestCases))]
         public void CPYZPTest(byte xRegisterValue, byte operandValue, bool carryFlag, bool zeroFlag, bool negativeFlag)
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.CPYZP);
+            InitZPMode(OpCodes.CPYZP, operandValue);
             CPU.IndexRegisterY = xRegisterValue;
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, operandValue);
             CPU.Do();
             Assert.That(CPU.IndexRegisterY, Is.EqualTo(xRegisterValue));
             Assert.That(CPU.CarryFlag, Is.EqualTo(carryFlag), "Carry flag");

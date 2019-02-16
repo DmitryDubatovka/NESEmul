@@ -9,9 +9,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void INCZPOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.INCZP);
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x10);
+            InitZPMode(OpCodes.INCZP, 0x10);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0xF);
             Assert.That(val, Is.EqualTo(0x11));
@@ -22,10 +20,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void INCZPXOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.INCZPX);
-            CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0xE);
-            Memory.StoreByteInMemory(0xF, 0xFF);
+            InitZPXMode(OpCodes.INCZPX, 0xFF);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0xF);
             Assert.That(val, Is.EqualTo(0));
@@ -36,10 +31,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void INCAbsOperationTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.INCAbs);
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, 0x7F);
+            InitAbsMode(OpCodes.INCAbs, 0x7F);
             CPU.Do();
             var val = Memory.LoadByteFromMemory(0x0102);
             Assert.That(val, Is.EqualTo(0x80));

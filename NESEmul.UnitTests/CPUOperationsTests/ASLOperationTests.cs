@@ -21,10 +21,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void ASLZPTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ASLZP);
+            InitZPMode(OpCodes.ASLZP, 0x80);
             CPU.Accumulator = 0x1;
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x80);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x1));
             var value = Memory.LoadByteFromMemory(0xF);
@@ -35,14 +33,10 @@ namespace NESEmul.UnitTests.CPUOperationTests
         }
 
         [Test]
-        public void ADCAbsXYTest()
+        public void ADCAbsXTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ASLAbsX);
+            InitAbsXMode(OpCodes.ASLAbsX, 0x3);
             CPU.Accumulator = 0x1;
-            CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0103, 0x3);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x1));
             var value = Memory.LoadByteFromMemory(0x0103);

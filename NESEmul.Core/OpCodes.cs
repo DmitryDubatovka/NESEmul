@@ -456,5 +456,45 @@ namespace NESEmul.Core
         LDXAbsY = 0xBE,
 
         #endregion
+
+        //Loads a byte of memory into the Y register setting the zero and negative flags as appropriate.
+        #region LDY
+
+        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        LDYImm = 0xA0,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        LDYZP = 0xA4,
+        
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        LDYZPX = 0xB4,
+        
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        LDYAbs = 0xAC,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        LDYAbsX = 0xBC,
+
+        #endregion
+
+        //Each of the bits in A or M is shift one place to the right. The bit that was in bit 0 is shifted into the carry flag. Bit 7 is set to zero.
+        #region LSR - Logical Shift Right
+
+        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        LSRAcc = 0x4A,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        LSRZP = 0x46,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        LSRZPX = 0x56,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        LSRAbs = 0x4E,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        LSRAbsX = 0x5E
+
+        #endregion
     }
 }

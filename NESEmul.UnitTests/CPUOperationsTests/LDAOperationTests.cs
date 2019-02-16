@@ -21,10 +21,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void LDAZPTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.LDAZP);
+            InitZPMode(OpCodes.LDAZP, 0x0);
             CPU.Accumulator = 0x10;
-            Memory.StoreByteInMemory(1, 0xF);
-            Memory.StoreByteInMemory(0xF, 0x0);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0x0));
             Assert.That(CPU.ZeroFlag, Is.EqualTo(true), "Zero flag");
@@ -34,11 +32,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void LDAAbsTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.LDAAbs);
+            InitAbsMode(OpCodes.LDAAbs, 0xFF);
             CPU.Accumulator = 0x0;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0102, 0xFF);
             CPU.Do();
             Assert.That(CPU.Accumulator, Is.EqualTo(0xFF));
             Assert.That(CPU.ZeroFlag, Is.EqualTo(false), "Zero flag");

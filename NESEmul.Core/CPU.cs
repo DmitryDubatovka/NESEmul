@@ -234,6 +234,14 @@ namespace NESEmul.Core
                     DoLDXOperation(@operator);
                     break;
 
+                case OpCodes.LDYImm:
+                case OpCodes.LDYZP:
+                case OpCodes.LDYZPX:
+                case OpCodes.LDYAbs:
+                case OpCodes.LDYAbsX:
+                    DoLDYOperation(@operator);
+                    break;
+
                 case OpCodes.INCZP:
                 case OpCodes.INCZPX:
                 case OpCodes.INCAbs:
@@ -241,6 +249,14 @@ namespace NESEmul.Core
                 case OpCodes.INX:
                 case OpCodes.INY:
                     DoINCOperation(@operator);
+                    break;
+                
+                case OpCodes.LSRAcc:
+                case OpCodes.LSRZP:
+                case OpCodes.LSRZPX:
+                case OpCodes.LSRAbs:
+                case OpCodes.LSRAbsX:
+                    DoLSROperation(@operator);
                     break;
 
                 case OpCodes.JmpInd:
@@ -305,7 +321,7 @@ namespace NESEmul.Core
             byte operandValue = FetchOperandValue(op);
             CarryFlag = registerValue >= operandValue;
             ZeroFlag = registerValue == operandValue;
-            SetNegativeFlag(registerValue - operandValue);
+            SetNegativeFlag((byte) (registerValue - operandValue));
         }
 
         private void DoFlagOperation(Operator op)
@@ -494,6 +510,30 @@ namespace NESEmul.Core
             ZeroFlag = IndexRegisterX == 0;
             SetNegativeFlag(IndexRegisterX);
         }
+        
+        private void DoLDYOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            IndexRegisterY = operandValue;
+            ZeroFlag = IndexRegisterY == 0;
+            SetNegativeFlag(IndexRegisterY);
+        }
+
+        private void DoLSROperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            CarryFlag = (operandValue & 0x1) == 1;
+            operandValue >>= 1;
+            if (op.AddressingMode == AddressingMode.Accumulator)
+                Accumulator = operandValue;
+            else
+            {
+                var address = ResolveAddress(op);
+                _memory.StoreByteInMemory(address, operandValue);
+            }
+            ZeroFlag = operandValue == 0;
+            NegativeFlag = false; // the 7th bit of the result is always 0
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte FetchOperandValue(Operator op)
@@ -567,7 +607,7 @@ namespace NESEmul.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetNegativeFlag(int value)
+        private void SetNegativeFlag(byte value)
         {
             NegativeFlag = (value & 0x80) == 0x80;
         }

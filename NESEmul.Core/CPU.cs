@@ -271,6 +271,34 @@ namespace NESEmul.Core
                 case OpCodes.RTS:
                     DoRTSOperation();
                     break;
+
+                case OpCodes.ORAImm:
+                case OpCodes.ORAZP:
+                case OpCodes.ORAZPX:
+                case OpCodes.ORAAbs:
+                case OpCodes.ORAAbsX:
+                case OpCodes.ORAAbsY:
+                case OpCodes.ORAIndX:
+                case OpCodes.ORAIndY:
+                    DoORAOperation(@operator);
+                    break;
+
+                case OpCodes.PHA:
+                    Push(Accumulator);
+                    break;
+
+                case OpCodes.PLA:
+                    Accumulator = Pop();
+                    SetNegativeFlag(Accumulator);
+                    ZeroFlag = Accumulator == 0;
+                    break;
+
+                case OpCodes.PHP:
+                    PushFlags();
+                    break;
+                case OpCodes.PLP:
+                    PopFlags();
+                    break;
             }
         }
 
@@ -533,6 +561,14 @@ namespace NESEmul.Core
             }
             ZeroFlag = operandValue == 0;
             NegativeFlag = false; // the 7th bit of the result is always 0
+        }
+
+        private void DoORAOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            Accumulator |= operandValue;
+            ZeroFlag = Accumulator == 0;
+            SetNegativeFlag(Accumulator);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

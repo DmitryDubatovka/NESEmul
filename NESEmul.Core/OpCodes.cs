@@ -24,6 +24,30 @@ namespace NESEmul.Core
         [OpCodesAddressingMode(AddressingMode.Implicit)]
         RTS = 0x60,
 
+        /// <summary>
+        /// Push Accumulator. Pushes a copy of the accumulator on to the stack.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        PHA = 0x48,
+
+        /// <summary>
+        /// Pull Accumulator. Pulls an 8 bit value from the stack and into the accumulator. The zero and negative flags are set as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        PLA = 0x68,
+
+        /// <summary>
+        /// Push Processor Status. Pushes a copy of the status flags on to the stack.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        PHP = 0x08,
+
+        /// <summary>
+        /// Pull Processor Status. Pulls an 8 bit value from the stack and into the processor flags. The flags will take on new states as determined by the value pulled.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        PLP = 0x28,
+
         //Add with Carry
         #region ADC
 
@@ -493,7 +517,37 @@ namespace NESEmul.Core
         LSRAbs = 0x4E,
 
         [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
-        LSRAbsX = 0x5E
+        LSRAbsX = 0x5E,
+
+        #endregion
+
+        //An inclusive OR is performed, bit by bit, on the accumulator contents using the contents of a byte of memory.
+        #region ORA Logical Inclusive OR
+
+        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        ORAImm = 0x09,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        ORAZP = 0x05,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        ORAZPX = 0x15,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        ORAAbs = 0x0D,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        ORAAbsX = 0x1D,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        ORAAbsY = 0x19,
+
+        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        ORAIndX = 0x01,
+
+        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        ORAIndY = 0x11,
+
 
         #endregion
     }

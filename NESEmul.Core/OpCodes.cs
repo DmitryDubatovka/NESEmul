@@ -570,5 +570,25 @@ namespace NESEmul.Core
         ROLAbsX = 0x3E,
 
         #endregion
+
+        //Rotate Right. Move each of the bits in either A or M one place to the right. Bit 7 is filled with the current value of the carry flag whilst the old bit 0 becomes the new carry flag value.
+        #region ROR
+
+        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        RORAccum = 0x6A,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        RORZP = 0x66,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        RORZPX = 0x76,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        RORAbs = 0x6E,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        RORAbsX = 0x7E,
+
+        #endregion
     }
 }

@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace NESEmul.UnitTests.CPUOperationTests
 {
     [TestFixture]
-    public class ROLOperationsTests : OperationBaseTests
+    public class ROLOperationTests : OperationBaseTests
     {
         [Test]
         public void ROLAccumOperationTest()

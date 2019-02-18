@@ -76,7 +76,8 @@
     <Compile Include="CPUOperationsTests\LSROperationTests.cs" />
     <Compile Include="CPUOperationsTests\OperationBaseTests.cs" />
     <Compile Include="CPUOperationsTests\ORAOperationTests.cs" />
-    <Compile Include="CPUOperationsTests\ROLOperationsTests.cs" />
+    <Compile Include="CPUOperationsTests\ROLOperationTests.cs" />
+    <Compile Include="CPUOperationsTests\ROROperationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCases\CPUOperationsTestCases.cs" />
   </ItemGroup>

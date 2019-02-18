@@ -283,6 +283,14 @@ namespace NESEmul.Core
                     DoORAOperation(@operator);
                     break;
 
+                case OpCodes.ROLAccum:
+                case OpCodes.ROLZP:
+                case OpCodes.ROLZPX:
+                case OpCodes.ROLAbs:
+                case OpCodes.ROLAbsX:
+                    DoROLOperation(@operator);
+                    break;
+
                 case OpCodes.PHA:
                     Push(Accumulator);
                     break;
@@ -569,6 +577,28 @@ namespace NESEmul.Core
             Accumulator |= operandValue;
             ZeroFlag = Accumulator == 0;
             SetNegativeFlag(Accumulator);
+        }
+
+        private void DoROLOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            var newCarryFlagValueSet = (operandValue & 0x80) == 0x80;
+            operandValue <<= 1;
+            if (CarryFlag)
+                operandValue |= 0x01;
+            else
+                operandValue &= 0xFE;
+            CarryFlag = newCarryFlagValueSet;
+            if (op.AddressingMode == AddressingMode.Accumulator)
+                Accumulator = operandValue;
+            else
+            {
+                var address = ResolveAddress(op);
+                _memory.StoreByteInMemory(address, operandValue);
+            }
+
+            ZeroFlag = operandValue == 0;
+            SetNegativeFlag(operandValue);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

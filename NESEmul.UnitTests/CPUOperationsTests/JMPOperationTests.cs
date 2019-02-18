@@ -48,5 +48,27 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Assert.That(cpu.IndexRegisterX, Is.EqualTo(0x2));
             Assert.That(cpu.IndexRegisterY, Is.EqualTo(0x4));
         }
+
+        [Test]
+        public void RTIOperationTest()
+        {
+            var cpu = new CPU(0x0600, Memory) {Accumulator = 0x6};
+            Memory.StoreByteInMemory(0x0600, (byte)OpCodes.PHA);
+            Memory.StoreByteInMemory(0x0601, (byte)OpCodes.EORImm);
+            Memory.StoreByteInMemory(0x0602, 0xD);
+            //0x6 ^ 0xD = 0xB
+            Memory.StoreByteInMemory(0x0603, (byte)OpCodes.PHA);
+            Memory.StoreByteInMemory(0x0604, (byte)OpCodes.ORAImm);
+            Memory.StoreByteInMemory(0x0605, 0x06);
+            Memory.StoreByteInMemory(0x0606, (byte)OpCodes.PHA);
+            Memory.StoreByteInMemory(0x0607, (byte)OpCodes.RTI);
+            Memory.StoreByteInMemory(0x060B, (byte)OpCodes.DEX);
+            cpu.Do();
+
+            Assert.That(cpu.IndexRegisterX, Is.EqualTo(0xFF));
+            Assert.That(cpu.CarryFlag, Is.EqualTo(true));
+            Assert.That(cpu.InterruptDisable, Is.EqualTo(true));
+            Assert.That(cpu.DecimalMode, Is.EqualTo(true));
+        }
     }
 }

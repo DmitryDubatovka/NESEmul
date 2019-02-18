@@ -315,6 +315,11 @@ namespace NESEmul.Core
                 case OpCodes.PLP:
                     PopFlags();
                     break;
+
+                case OpCodes.RTI:
+                    PopFlags();
+                    ProgramCounter = (ushort) (Build2BytesAddress(Pop(), Pop()) - 1);
+                    break;
             }
         }
 

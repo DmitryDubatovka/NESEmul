@@ -48,6 +48,12 @@ namespace NESEmul.Core
         [OpCodesAddressingMode(AddressingMode.Implicit)]
         PLP = 0x28,
 
+        /// <summary>
+        /// Return from Interrupt. The RTI instruction is used at the end of an interrupt processing routine. It pulls the processor flags from the stack followed by the program counter.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        RTI = 0x40,
+
         //Add with Carry
         #region ADC
 

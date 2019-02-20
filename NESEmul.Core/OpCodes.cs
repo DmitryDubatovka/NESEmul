@@ -656,5 +656,28 @@ namespace NESEmul.Core
         STAIndY = 0x91,
 
         #endregion
+
+        //Stores the contents of the X/Y register into memory.
+        #region STX/Y Store X/Y Register
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        STXZP = 0x86,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageY)]
+        STXZPY = 0x96,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        STXAbs = 0x8E,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        STYZP = 0x84,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        STYZPX = 0x94,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        STYAbs = 0x8C,
+
+        #endregion
     }
 }

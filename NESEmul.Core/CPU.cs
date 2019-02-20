@@ -341,6 +341,18 @@ namespace NESEmul.Core
                 case OpCodes.STAIndY:
                     Accumulator = FetchOperandValue(@operator);
                     break;
+                
+                case OpCodes.STXAbs:
+                case OpCodes.STXZP:
+                case OpCodes.STXZPY:
+                    IndexRegisterX = FetchOperandValue(@operator);
+                    break;
+                
+                case OpCodes.STYAbs:
+                case OpCodes.STYZP:
+                case OpCodes.STYZPX:
+                    IndexRegisterY = FetchOperandValue(@operator);
+                    break;
             }
         }
 

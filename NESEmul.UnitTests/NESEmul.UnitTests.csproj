@@ -79,7 +79,7 @@
     <Compile Include="CPUOperationsTests\ROLOperationTests.cs" />
     <Compile Include="CPUOperationsTests\ROROperationTests.cs" />
     <Compile Include="CPUOperationsTests\SBCOperationTests.cs" />
-    <Compile Include="CPUOperationsTests\STAOperationTests.cs" />
+    <Compile Include="CPUOperationsTests\STAInRegisterOperationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCases\CPUOperationsTestCases.cs" />
   </ItemGroup>

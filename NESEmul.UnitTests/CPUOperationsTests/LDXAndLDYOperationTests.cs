@@ -43,11 +43,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void LDXZPYTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.LDXZPY);
-            CPU.IndexRegisterY = 0x2;
+            InitZPYMode(OpCodes.LDXZPY, 0xFE, 0x2);
             CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(0x04, 0xFE);
             CPU.Do();
             Assert.That(CPU.IndexRegisterX, Is.EqualTo(0xFE));
             Assert.That(CPU.NegativeFlag, Is.EqualTo(true));

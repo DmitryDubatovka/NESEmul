@@ -55,8 +55,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
             var cpu = new CPU(0x0600, Memory) {Accumulator = 0x6};
             Memory.StoreByteInMemory(0x0600, (byte)OpCodes.PHA);
             Memory.StoreByteInMemory(0x0601, (byte)OpCodes.EORImm);
-            Memory.StoreByteInMemory(0x0602, 0xD);
-            //0x6 ^ 0xD = 0xB
+            Memory.StoreByteInMemory(0x0602, 0xD); //0x6 ^ 0xD = 0xB
             Memory.StoreByteInMemory(0x0603, (byte)OpCodes.PHA);
             Memory.StoreByteInMemory(0x0604, (byte)OpCodes.ORAImm);
             Memory.StoreByteInMemory(0x0605, 0x06);

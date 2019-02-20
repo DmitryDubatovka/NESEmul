@@ -32,12 +32,8 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void LDXAbsYTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.LDXAbsY);
-            CPU.IndexRegisterY = 0x1;
+            InitAbsYMode(OpCodes.LDXAbsY, 0x3);
             CPU.IndexRegisterX = 0x1;
-            Memory.StoreByteInMemory(1, 0x02);
-            Memory.StoreByteInMemory(2, 0x01);
-            Memory.StoreByteInMemory(0x0103, 0x3);
             CPU.Do();
             Assert.That(CPU.IndexRegisterX, Is.EqualTo(0x3));
             Assert.That(CPU.NegativeFlag, Is.EqualTo(false));

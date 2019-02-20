@@ -33,5 +33,12 @@ namespace NESEmul.UnitTests.TestCases
             yield return new TestCaseData((byte)0x10, (byte)0x10, true, true, false);
             yield return new TestCaseData((byte)0x0, (byte)0x0, true, true, false);
         }
+
+        public static IEnumerable<TestCaseData> SBCImmTestCases()
+        {
+            yield return new TestCaseData((byte)0x1, (byte)0x2, (byte)0xFE, false, false, true, true);
+            yield return new TestCaseData((byte)0x02, (byte)0x1, (byte)0x0, true, true, false, false);
+            yield return new TestCaseData((byte)0xFE, (byte)0x1, (byte)0xFC, true, false, false, true);
+        }
     }
 }

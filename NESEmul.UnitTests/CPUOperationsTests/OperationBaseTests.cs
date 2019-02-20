@@ -46,5 +46,14 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Memory.StoreByteInMemory(opCodeAddress + 2, hiByte);
             Memory.StoreByteInMemory((hiByte << 8) + loByte + xRegisterValue, value);
         }
+        
+        protected void InitAbsYMode(OpCodes opCode, byte value, byte yRegisterValue = 0x1, int opCodeAddress = 0x0, byte hiByte = 0x01, byte loByte = 0x02)
+        {
+            CPU.IndexRegisterY = yRegisterValue;
+            Memory.StoreByteInMemory(opCodeAddress, (byte)opCode);
+            Memory.StoreByteInMemory(opCodeAddress + 1, loByte);
+            Memory.StoreByteInMemory(opCodeAddress + 2, hiByte);
+            Memory.StoreByteInMemory((hiByte << 8) + loByte + yRegisterValue, value);
+        }
     }
 }

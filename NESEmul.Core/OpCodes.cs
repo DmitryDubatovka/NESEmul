@@ -596,5 +596,65 @@ namespace NESEmul.Core
         RORAbsX = 0x7E,
 
         #endregion
+
+        //A,Z,C,N = A-M-(1-C) This instruction subtracts the contents of a memory location to the accumulator together with
+        //the not of the carry bit. If overflow occurs the carry bit is clear, this enables multiple byte subtraction to be performed.
+        //Processor Status after use:
+        #region SBC Subtract with Carry
+
+        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        SBCImm = 0xE9,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        SBCZP = 0xE5,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        SBCZPX = 0xF5,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        SBCAbs = 0xED,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        SBCAbsX = 0xFD,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        SBCAbsY = 0xF9,
+
+        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        SBCIndX = 0xE1,
+
+        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        SBCIndY = 0xF1,
+
+
+        #endregion
+
+        /// <summary>
+        /// Stores the contents of the accumulator into memory.
+        /// </summary>
+        #region STA - Store Accumulator
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        STAZP = 0x85,
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        STAZPX = 0x95,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        STAAbs = 0x8D,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        STAAbsX = 0x9D,
+
+        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        STAAbsY = 0x99,
+
+        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        STAIndX = 0x81,
+
+        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        STAIndY = 0x91,
+
+        #endregion
     }
 }

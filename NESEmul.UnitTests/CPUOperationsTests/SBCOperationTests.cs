@@ -5,12 +5,12 @@ using NUnit.Framework;
 namespace NESEmul.UnitTests.CPUOperationTests
 {
     [TestFixture]
-    public class ADCOperationTests : OperationBaseTests
+    public class SBCOperationTests : OperationBaseTests
     {
-        [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.ADCImmTestCases))]
-        public void ADCImmTest(byte accumValue, byte value, byte resultValue, bool carryFlagResult, bool zeroFlagResult, bool overflowFlagResult, bool negativeFlagResult)
+        [TestCaseSource(typeof(CPUOperationsTestCases), nameof(CPUOperationsTestCases.SBCImmTestCases))]
+        public void SBCImmTest(byte accumValue, byte value, byte resultValue, bool carryFlagResult, bool zeroFlagResult, bool overflowFlagResult, bool negativeFlagResult)
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCImm);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.SBCImm);
             CPU.Accumulator = accumValue;
             Memory.StoreByteInMemory(1, value);
             CPU.Do();
@@ -22,63 +22,63 @@ namespace NESEmul.UnitTests.CPUOperationTests
         }
 
         [Test]
-        public void ADCImmWithCarryFlagTest()
+        public void SBCImmWithCarryFlagTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCImm);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.SBCImm);
             CPU.CarryFlag = true;
             CPU.Accumulator = 0x1;
             Memory.StoreByteInMemory(1, 0x2);
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFF));
             Assert.That(CPU.CarryFlag, Is.EqualTo(false), "Carry flag");
             Assert.That(CPU.ZeroFlag, Is.EqualTo(false), "Zero flag");
-            Assert.That(CPU.OverflowFlag, Is.EqualTo(false), "Overflow flag");
-            Assert.That(CPU.NegativeFlag, Is.EqualTo(false), "Negative flag");
+            Assert.That(CPU.OverflowFlag, Is.EqualTo(true), "Overflow flag");
+            Assert.That(CPU.NegativeFlag, Is.EqualTo(true), "Negative flag");
         }
 
         [Test]
-        public void ADCZPTest()
+        public void SBCZPTest()
         {
-            InitZPMode(OpCodes.ADCZP, 0x3);
+            InitZPMode(OpCodes.SBCZP, 0x3);
             CPU.Accumulator = 0x1;
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
 
         [Test]
-        public void ADCZPXTest()
+        public void SBCZPXTest()
         {
-            InitZPXMode(OpCodes.ADCZPX, 0x3);
+            InitZPXMode(OpCodes.SBCZPX, 0x3);
             CPU.Accumulator = 0x1;
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
 
         [Test]
-        public void ADCAbsTest()
+        public void SBCAbsTest()
         {
-            InitAbsMode(OpCodes.ADCAbs, 0x3);
+            InitAbsMode(OpCodes.SBCAbs, 0x3);
             CPU.Accumulator = 0x1;
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
 
         [Theory]
-        public void ADCAbsXYTest(bool isXMode)
+        public void SBCAbsXYTest(bool isXMode)
         {
             if(isXMode)
-                InitAbsXMode(OpCodes.ADCAbsX, 0x3);
+                InitAbsXMode(OpCodes.SBCAbsX, 0x3);
             else
-                InitAbsYMode(OpCodes.ADCAbsY, 0x3);
+                InitAbsYMode(OpCodes.SBCAbsY, 0x3);
             CPU.Accumulator = 0x1;
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
 
         [Test]
-        public void ADCIndirectXTest()
+        public void SBCIndirectXTest()
         {
-            Memory.StoreByteInMemory(0, (byte)OpCodes.ADCIndX);
+            Memory.StoreByteInMemory(0, (byte)OpCodes.SBCIndX);
             CPU.Accumulator = 0x1;
             CPU.IndexRegisterX = 0xFF;
             Memory.StoreByteInMemory(0x1, 0x10);
@@ -86,13 +86,13 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Memory.StoreByteInMemory(0x10, 0x04);
             Memory.StoreByteInMemory(0x0402, 0x3);
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
 
         [Test]
         public void ADCIndirectYTest()
         {
-            Memory.StoreByteInMemory(0, (byte) OpCodes.ADCIndY);
+            Memory.StoreByteInMemory(0, (byte) OpCodes.SBCIndY);
             CPU.Accumulator = 0x1;
             CPU.IndexRegisterY = 0xFF;
             Memory.StoreByteInMemory(0x1, 0x10);
@@ -100,8 +100,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
             Memory.StoreByteInMemory(0x11, 0x02);
             Memory.StoreByteInMemory(0x303, 0x03);
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x4));
+            Assert.That(CPU.Accumulator, Is.EqualTo(0xFD));
         }
-
     }
 }

@@ -320,6 +320,27 @@ namespace NESEmul.Core
                     PopFlags();
                     ProgramCounter = (ushort) (Build2BytesAddress(Pop(), Pop()) - 1);
                     break;
+
+                case OpCodes.SBCImm:
+                case OpCodes.SBCAbs:
+                case OpCodes.SBCZP:
+                case OpCodes.SBCAbsX:
+                case OpCodes.SBCAbsY:
+                case OpCodes.SBCIndX:
+                case OpCodes.SBCIndY:
+                case OpCodes.SBCZPX:
+                    DoSBCOperation(@operator);
+                    break;
+                
+                case OpCodes.STAZP:
+                case OpCodes.STAZPX:
+                case OpCodes.STAAbs:
+                case OpCodes.STAAbsX:
+                case OpCodes.STAAbsY:
+                case OpCodes.STAIndX:
+                case OpCodes.STAIndY:
+                    Accumulator = FetchOperandValue(@operator);
+                    break;
             }
         }
 
@@ -634,6 +655,19 @@ namespace NESEmul.Core
 
             ZeroFlag = operandValue == 0;
             SetNegativeFlag(operandValue);
+        }
+
+        private void DoSBCOperation(Operator op)
+        {
+            byte accum = Accumulator;
+            byte operandValue = FetchOperandValue(op);
+            byte result = (byte) (Accumulator - operandValue - (CarryFlag ? 0 : 1));
+            Accumulator = result;
+            ZeroFlag = Accumulator == 0;
+            SetNegativeFlag(Accumulator);
+            bool equalSign = (accum & 0x80 ^ operandValue & 0x80) == 0;
+            OverflowFlag = equalSign && ((accum ^ result) & 0x80) != 0;
+            CarryFlag = !OverflowFlag;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

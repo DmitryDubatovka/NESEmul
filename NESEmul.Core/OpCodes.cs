@@ -200,6 +200,18 @@ namespace NESEmul.Core
 
         #endregion
 
+        //A & M, N = M7, V = M6 
+        //This instructions is used to test if one or more bits are set in a target memory location. The mask pattern in A is ANDed with the value in memory to set or clear the zero flag,
+        //but the result is not kept. Bits 7 and 6 of the value from memory are copied into the N and V flags.
+        #region BIT Bit Test
+
+        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        BITZP = 0x24,
+
+        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        BITAbs = 0x2C,
+
+        #endregion
         //Relative addressing mode is used by branch instructions (e.g. BEQ, BNE, etc.) which contain a signed 8 bit relative offset (e.g. -128 to +127) which is added to program counter if the condition is true.
         //As the program counter itself is incremented during instruction execution by two the effective address range for the target instruction must be with -126 to +129 bytes of the branch.
         #region Branches
@@ -678,6 +690,45 @@ namespace NESEmul.Core
         [OpCodesAddressingMode(AddressingMode.Absolute)]
         STYAbs = 0x8C,
 
+        #endregion
+
+        #region Transfers
+
+        /// <summary>
+        /// Transfer Accumulator to X. X = A. Copies the current contents of the accumulator into the X register and sets the zero and negative flags as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TAX = 0xAA,
+
+        /// <summary>
+        /// Transfer Accumulator to Y. Y = A. Copies the current contents of the accumulator into the Y register and sets the zero and negative flags as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TAY = 0xA8,
+
+        /// <summary>
+        /// Transfer Stack Pointer to X. X = S. Copies the current contents of the stack register into the X register and sets the zero and negative flags as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TSX = 0xBA,
+
+        /// <summary>
+        /// Transfer X to Accumulator. A = X. Copies the current contents of the X register into the accumulator and sets the zero and negative flags as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TXA = 0x8A,
+        
+        /// <summary>
+        /// Transfer X to Stack Pointer. S = X. Copies the current contents of the X register into the stack register.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TXS = 0x9A,
+
+        /// <summary>
+        /// Transfer Y to Accumulator. A = Y. Copies the current contents of the Y register into the accumulator and sets the zero and negative flags as appropriate.
+        /// </summary>
+        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        TYA  = 0x98,
         #endregion
     }
 }

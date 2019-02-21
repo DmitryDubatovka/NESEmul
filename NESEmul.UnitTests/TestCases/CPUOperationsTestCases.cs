@@ -40,5 +40,24 @@ namespace NESEmul.UnitTests.TestCases
             yield return new TestCaseData((byte)0x02, (byte)0x1, (byte)0x0, true, true, false, false);
             yield return new TestCaseData((byte)0xFE, (byte)0x1, (byte)0xFC, true, false, false, true);
         }
+        
+        public static IEnumerable<TestCaseData> TransferOperationsTestCases()
+        {
+            //byte value, bool zeroFlag, bool negativeFlag
+            yield return new TestCaseData((byte)0x1, false, false);
+            yield return new TestCaseData((byte)0x0, true, false);
+            yield return new TestCaseData((byte)0xFF, false, true);
+        }
+        
+        public static IEnumerable<TestCaseData> BITZPTestCases()
+        {
+            //byte accumValue, byte operandValue, bool zeroFlag, bool negativeFlag, bool overflowFlag
+            yield return new TestCaseData((byte)0x01, (byte)0xFE, true, true, true);
+            yield return new TestCaseData((byte)0xFE, (byte)0x01, true, false, false);
+            yield return new TestCaseData((byte)0x40, (byte)0x40, false, false, true);
+            yield return new TestCaseData((byte)0x80, (byte)0x80, false, true, false);
+            yield return new TestCaseData((byte)0xFE, (byte)0xFE, false, true, true);
+            yield return new TestCaseData((byte)0x03, (byte)0x02, false, false, false);
+        }
     }
 }

@@ -162,6 +162,11 @@ namespace NESEmul.Core
                     DoBranchOperation(@operator);
                     break;
 
+                case OpCodes.BITAbs:
+                case OpCodes.BITZP:
+                    DoBITOperation(@operator);
+                    break;
+
                 case OpCodes.CMPAbs:
                 case OpCodes.CMPImm:
                 case OpCodes.CMPZP:
@@ -353,6 +358,15 @@ namespace NESEmul.Core
                 case OpCodes.STYZPX:
                     IndexRegisterY = FetchOperandValue(@operator);
                     break;
+                
+                case OpCodes.TAX:
+                case OpCodes.TAY:
+                case OpCodes.TSX:
+                case OpCodes.TXA:
+                case OpCodes.TXS:
+                case OpCodes.TYA:
+                    DoTransferOperation(@operator);
+                    break;
             }
         }
 
@@ -396,6 +410,15 @@ namespace NESEmul.Core
                 var address = ResolveAddress(op);
                 _memory.StoreByteInMemory(address, byteNewValue);
             }
+        }
+
+        private void DoBITOperation(Operator op)
+        {
+            var operandValue = FetchOperandValue(op);
+            byte result = (byte)(Accumulator & operandValue);
+            ZeroFlag = result == 0;
+            SetNegativeFlag(operandValue);
+            OverflowFlag = (operandValue & 0x40) == 0x40;
         }
 
         private void DoCMPOperation(Operator op, byte registerValue)
@@ -682,6 +705,41 @@ namespace NESEmul.Core
             CarryFlag = !OverflowFlag;
         }
 
+        private void DoTransferOperation(Operator op)
+        {
+            bool updateFlags = true;
+            switch (op.OpCode)
+            {
+                case OpCodes.TXA:
+                    Accumulator = IndexRegisterX;
+                    break;
+                case OpCodes.TAX:
+                    IndexRegisterX = Accumulator;
+                    break;
+                case OpCodes.TYA:
+                    Accumulator = IndexRegisterY;
+                    break;
+                case OpCodes.TAY:
+                    IndexRegisterY = Accumulator;
+                    break;
+                case OpCodes.TSX:
+                    IndexRegisterX = _stackPointer;
+                    ZeroFlag = IndexRegisterX == 0;
+                    SetNegativeFlag(IndexRegisterX);
+                    updateFlags = false;
+                    break;
+                case OpCodes.TXS:
+                    _stackPointer = IndexRegisterX;
+                    updateFlags = false;
+                    break;
+            }
+
+            if (updateFlags)
+            {
+                ZeroFlag = Accumulator == 0;
+                SetNegativeFlag(Accumulator);
+            }
+        }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte FetchOperandValue(Operator op)
         {

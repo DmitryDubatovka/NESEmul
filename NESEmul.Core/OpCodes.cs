@@ -5,53 +5,53 @@ namespace NESEmul.Core
         /// <summary>
         /// Force break
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 7)]
         BRK = 0x0,
 
         /// <summary>
         /// No Operation
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         NOP = 0xEA,
 
         //Jump to Subroutine. The JSR instruction pushes the address (minus one) of the return point on to the stack and then sets the program counter to the target memory address.
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         JSR = 0x20,
 
         /// <summary>
         /// RTS pulls the top two bytes off the stack (low byte first) and transfers program control to that address+1.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 6)]
         RTS = 0x60,
 
         /// <summary>
         /// Push Accumulator. Pushes a copy of the accumulator on to the stack.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 3)]
         PHA = 0x48,
 
         /// <summary>
         /// Pull Accumulator. Pulls an 8 bit value from the stack and into the accumulator. The zero and negative flags are set as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 4)]
         PLA = 0x68,
 
         /// <summary>
         /// Push Processor Status. Pushes a copy of the status flags on to the stack.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 3)]
         PHP = 0x08,
 
         /// <summary>
         /// Pull Processor Status. Pulls an 8 bit value from the stack and into the processor flags. The flags will take on new states as determined by the value pulled.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 4)]
         PLP = 0x28,
 
         /// <summary>
         /// Return from Interrupt. The RTI instruction is used at the end of an interrupt processing routine. It pulls the processor flags from the stack followed by the program counter.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 6)]
         RTI = 0x40,
 
         //Add with Carry
@@ -60,49 +60,49 @@ namespace NESEmul.Core
         /// <summary>
         /// Immediate addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         ADCImm = 0x69,
         
         /// <summary>
         /// Zero Page addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         ADCZP = 0x65,
         
         /// <summary>
         /// Zero Page X addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         ADCZPX = 0x75,
         
         /// <summary>
         /// Absolute addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         ADCAbs = 0x6D,
         
         /// <summary>
         /// Absolute addressing X mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         ADCAbsX = 0x7D,
         
         /// <summary>
         /// Absolute addressing Y mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         ADCAbsY = 0x79,
         
         /// <summary>
         /// Indexed Indirect addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         ADCIndX = 0x61,
         
         /// <summary>
         /// Indirect indexed addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         ADCIndY = 0x71,
 
         #endregion
@@ -113,49 +113,49 @@ namespace NESEmul.Core
         /// <summary>
         /// Immediate addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         ANDImm = 0x29,
 
         /// <summary>
         /// Zero page addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         ANDZP = 0x25,
 
         /// <summary>
         /// Zero page X addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         ANDZPX = 0x35,
 
         /// <summary>
         /// Absolute addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         ANDAbs = 0x2D,
 
         /// <summary>
         /// Absolute addressing X mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         ANDAbsX = 0x3D,
 
         /// <summary>
         /// Absolute addressing Y mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         ANDAbsY = 0x39,
 
         /// <summary>
         /// Indexed Indirect addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         ANDIndX = 0x21,
         
         /// <summary>
         /// Indirect indexed addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         ANDIndY = 0x31,
 
 
@@ -169,32 +169,32 @@ namespace NESEmul.Core
         /// <summary>
         /// Accumulator addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        [OpCodesMetadata(AddressingMode.Accumulator, 2)]
         ASLAccum = 0x0A,
 
         /// <summary>
         /// Zero Page addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         ASLZP = 0x06,
 
         /// <summary>
         /// Zero Page X addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         ASLZPX = 0x16,
 
         /// <summary>
         /// Absolute addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         ASLAbs = 0x0E,
 
 
         /// <summary>
         /// Absolute X addressing mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         ASLAbsX = 0x1E,
 
 
@@ -205,10 +205,10 @@ namespace NESEmul.Core
         //but the result is not kept. Bits 7 and 6 of the value from memory are copied into the N and V flags.
         #region BIT Bit Test
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         BITZP = 0x24,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         BITAbs = 0x2C,
 
         #endregion
@@ -219,103 +219,103 @@ namespace NESEmul.Core
         /// <summary>
         /// Branch on Plus
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BPL = 0x10,
 
         /// <summary>
         /// Branch on Minus
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BMI = 0x30,
 
         /// <summary>
         /// Branch on oVerflow Clear
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BVC = 0x50,
 
         /// <summary>
         /// Branch on oVerflow Set
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BVS = 0x70,
 
         /// <summary>
         /// Branch on Carry Clear
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BCC = 0x90,
 
         /// <summary>
         /// Branch on Carry Set
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BCS = 0xB0,
 
         /// <summary>
         /// Branch on Not Equal
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BNE = 0xD0,
 
         /// <summary>
         /// Branch on EQual
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Relative)]
+        [OpCodesMetadata(AddressingMode.Relative, 2, true)]
         BEQ = 0xF0,
         #endregion
 
         //CMP (CoMPare accumulator)  If the value in the accumulator is equal or greater than the compared value, the Carry will be set.
         //The equal (Z) and sign (S) flags will be set based on equality or lack thereof and the sign (i.e. A>=$80) of the accumulator.
         #region CMP
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         CMPImm = 0xC9,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         CMPZP = 0xC5,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         CMPZPX = 0xD5,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         CMPAbs = 0xCD,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         CMPAbsX = 0xDD,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         CMPAbsY = 0xD9,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         CMPIndX = 0xC1,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         CMPIndY = 0xD1,
 
         #endregion
 
         //ComPare X register. Operation and flag results are identical to equivalent mode accumulator CMP ops.
         #region CPX
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         CPXImm = 0xE0,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         CPXZP = 0xE4,
         
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         CPXAbs = 0xEC,
 
         #endregion
 
         //ComPare Y register. Operation and flag results are identical to equivalent mode accumulator CMP ops.
         #region CPY
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         CPYImm = 0xC0,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         CPYZP = 0xC4,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         CPYAbs = 0xCC,
 
         #endregion
@@ -325,43 +325,43 @@ namespace NESEmul.Core
         /// <summary>
         /// Clear Carry flag
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         CLC = 0x18,
 
         /// <summary>
         /// Clear Decimal Mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         CLD = 0xD8,
 
         /// <summary>
         /// Clear Interrupt Disable
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         CLI = 0x58,
 
         /// <summary>
         /// Clear Overflow flag
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         CLV = 0xB8,
 
         /// <summary>
         /// Set Carry flag
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         SEC = 0x38,
 
         /// <summary>
         /// Set Interrupt Disable
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         SEI = 0x78,
 
         /// <summary>
         /// Set Decimal Mode
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         SED = 0xF8,
 
 
@@ -369,49 +369,49 @@ namespace NESEmul.Core
 
         //DECrement memory
         #region DEC
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         DECZP = 0xC6,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         DECZPX = 0xD6,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         DECAbs = 0xCE,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         DECAbsX = 0xDE,
 
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         DEX = 0xCA,
 
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         DEY = 0x88,
 
         #endregion
 
         #region EOR (XOR) An exclusive OR is performed, bit by bit, on the accumulator contents using the contents of a byte of memory.
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         EORImm = 0x49,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         EORZP = 0x45,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         EORZPX = 0x55,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         EORAbs = 0x4D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         EORAbsX = 0x5D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         EORAbsY = 0x59,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         EORIndX = 0x41,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         EORIndY = 0x51,
 
         #endregion
@@ -419,22 +419,22 @@ namespace NESEmul.Core
         //Adds one to the value held at a specified memory location setting the zero and negative flags as appropriate.
         #region INC
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         INCZP = 0xE6,
         
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         INCZPX = 0xF6,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         INCAbs = 0xEE,
         
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         INCAbsX = 0xFE,
 
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         INX = 0xE8,
 
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         INY = 0xC8,
 
         #endregion
@@ -442,10 +442,10 @@ namespace NESEmul.Core
         //Sets the program counter to the address specified by the operand.
         #region JMP
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 3)]
         JmpAbs = 0x4C,
 
-        [OpCodesAddressingMode(AddressingMode.Indirect)]
+        [OpCodesMetadata(AddressingMode.Indirect, 5)]
         JmpInd = 0x6C,
 
         #endregion
@@ -453,28 +453,28 @@ namespace NESEmul.Core
         //Loads a byte of memory into the accumulator setting the zero and negative flags as appropriate.
         #region LDA
 
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         LDAImm = 0xA9,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         LDAZP = 0xA5,
         
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         LDAZPX = 0xB5,
         
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         LDAAbs = 0xAD,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         LDAAbsX = 0xBD,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         LDAAbsY = 0xB9,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         LDAIndX = 0xA1,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         LDAIndY = 0xB1,
 
         #endregion
@@ -482,19 +482,19 @@ namespace NESEmul.Core
         //Loads a byte of memory into the X register setting the zero and negative flags as appropriate.
         #region LDX
 
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         LDXImm = 0xA2,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         LDXZP = 0xA6,
         
-        [OpCodesAddressingMode(AddressingMode.ZeroPageY)]
+        [OpCodesMetadata(AddressingMode.ZeroPageY, 4)]
         LDXZPY = 0xB6,
         
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         LDXAbs = 0xAE,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         LDXAbsY = 0xBE,
 
         #endregion
@@ -502,19 +502,19 @@ namespace NESEmul.Core
         //Loads a byte of memory into the Y register setting the zero and negative flags as appropriate.
         #region LDY
 
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         LDYImm = 0xA0,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         LDYZP = 0xA4,
         
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         LDYZPX = 0xB4,
         
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         LDYAbs = 0xAC,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         LDYAbsX = 0xBC,
 
         #endregion
@@ -522,19 +522,19 @@ namespace NESEmul.Core
         //Each of the bits in A or M is shift one place to the right. The bit that was in bit 0 is shifted into the carry flag. Bit 7 is set to zero.
         #region LSR - Logical Shift Right
 
-        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        [OpCodesMetadata(AddressingMode.Accumulator, 2)]
         LSRAcc = 0x4A,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         LSRZP = 0x46,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         LSRZPX = 0x56,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         LSRAbs = 0x4E,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         LSRAbsX = 0x5E,
 
         #endregion
@@ -542,28 +542,28 @@ namespace NESEmul.Core
         //An inclusive OR is performed, bit by bit, on the accumulator contents using the contents of a byte of memory.
         #region ORA Logical Inclusive OR
 
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         ORAImm = 0x09,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         ORAZP = 0x05,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         ORAZPX = 0x15,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         ORAAbs = 0x0D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         ORAAbsX = 0x1D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         ORAAbsY = 0x19,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         ORAIndX = 0x01,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         ORAIndY = 0x11,
 
 
@@ -572,19 +572,19 @@ namespace NESEmul.Core
         //Move each of the bits in either A or M one place to the left. Bit 0 is filled with the current value of the carry flag whilst the old bit 7 becomes the new carry flag value.
         #region ROL
 
-        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        [OpCodesMetadata(AddressingMode.Accumulator, 2)]
         ROLAccum = 0x2A,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         ROLZP = 0x26,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         ROLZPX = 0x36,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         ROLAbs = 0x2E,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         ROLAbsX = 0x3E,
 
         #endregion
@@ -592,19 +592,19 @@ namespace NESEmul.Core
         //Rotate Right. Move each of the bits in either A or M one place to the right. Bit 7 is filled with the current value of the carry flag whilst the old bit 0 becomes the new carry flag value.
         #region ROR
 
-        [OpCodesAddressingMode(AddressingMode.Accumulator)]
+        [OpCodesMetadata(AddressingMode.Accumulator, 2)]
         RORAccum = 0x6A,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 5)]
         RORZP = 0x66,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 6)]
         RORZPX = 0x76,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 6)]
         RORAbs = 0x6E,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 7)]
         RORAbsX = 0x7E,
 
         #endregion
@@ -614,28 +614,28 @@ namespace NESEmul.Core
         //Processor Status after use:
         #region SBC Subtract with Carry
 
-        [OpCodesAddressingMode(AddressingMode.Immediate)]
+        [OpCodesMetadata(AddressingMode.Immediate, 2)]
         SBCImm = 0xE9,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         SBCZP = 0xE5,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         SBCZPX = 0xF5,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         SBCAbs = 0xED,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 4, true)]
         SBCAbsX = 0xFD,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 4, true)]
         SBCAbsY = 0xF9,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         SBCIndX = 0xE1,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 5, true)]
         SBCIndY = 0xF1,
 
 
@@ -646,25 +646,25 @@ namespace NESEmul.Core
         /// </summary>
         #region STA - Store Accumulator
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         STAZP = 0x85,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         STAZPX = 0x95,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         STAAbs = 0x8D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteX)]
+        [OpCodesMetadata(AddressingMode.AbsoluteX, 5)]
         STAAbsX = 0x9D,
 
-        [OpCodesAddressingMode(AddressingMode.AbsoluteY)]
+        [OpCodesMetadata(AddressingMode.AbsoluteY, 5)]
         STAAbsY = 0x99,
 
-        [OpCodesAddressingMode(AddressingMode.IndexedIndirect)]
+        [OpCodesMetadata(AddressingMode.IndexedIndirect, 6)]
         STAIndX = 0x81,
 
-        [OpCodesAddressingMode(AddressingMode.IndirectIndexed)]
+        [OpCodesMetadata(AddressingMode.IndirectIndexed, 6)]
         STAIndY = 0x91,
 
         #endregion
@@ -672,22 +672,22 @@ namespace NESEmul.Core
         //Stores the contents of the X/Y register into memory.
         #region STX/Y Store X/Y Register
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         STXZP = 0x86,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageY)]
+        [OpCodesMetadata(AddressingMode.ZeroPageY, 4)]
         STXZPY = 0x96,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         STXAbs = 0x8E,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPage)]
+        [OpCodesMetadata(AddressingMode.ZeroPage, 3)]
         STYZP = 0x84,
 
-        [OpCodesAddressingMode(AddressingMode.ZeroPageX)]
+        [OpCodesMetadata(AddressingMode.ZeroPageX, 4)]
         STYZPX = 0x94,
 
-        [OpCodesAddressingMode(AddressingMode.Absolute)]
+        [OpCodesMetadata(AddressingMode.Absolute, 4)]
         STYAbs = 0x8C,
 
         #endregion
@@ -697,37 +697,37 @@ namespace NESEmul.Core
         /// <summary>
         /// Transfer Accumulator to X. X = A. Copies the current contents of the accumulator into the X register and sets the zero and negative flags as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TAX = 0xAA,
 
         /// <summary>
         /// Transfer Accumulator to Y. Y = A. Copies the current contents of the accumulator into the Y register and sets the zero and negative flags as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TAY = 0xA8,
 
         /// <summary>
         /// Transfer Stack Pointer to X. X = S. Copies the current contents of the stack register into the X register and sets the zero and negative flags as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TSX = 0xBA,
 
         /// <summary>
         /// Transfer X to Accumulator. A = X. Copies the current contents of the X register into the accumulator and sets the zero and negative flags as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TXA = 0x8A,
         
         /// <summary>
         /// Transfer X to Stack Pointer. S = X. Copies the current contents of the X register into the stack register.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TXS = 0x9A,
 
         /// <summary>
         /// Transfer Y to Accumulator. A = Y. Copies the current contents of the Y register into the accumulator and sets the zero and negative flags as appropriate.
         /// </summary>
-        [OpCodesAddressingMode(AddressingMode.Implicit)]
+        [OpCodesMetadata(AddressingMode.Implicit, 2)]
         TYA  = 0x98,
         #endregion
     }

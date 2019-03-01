@@ -9,6 +9,7 @@ namespace NESEmul.Core
         private readonly Memory _memory;
         private readonly Stack _stack;
         private readonly OpCodesDecoder _decoder;
+        private bool _hasBoundaryCross;
 
         public ALUUnit(CPU cpu, Memory memory, Stack stack)
         {
@@ -20,16 +21,18 @@ namespace NESEmul.Core
 
         public void Do()
         {
+            int cycles = 0;
             while (!_cpu.BreakCommand)
             {
-
+                _hasBoundaryCross = false;
                 var @operator = _decoder.Decode(_memory.LoadByteFromMemory(_cpu.ProgramCounter));
-                DoOperator(@operator);
+                cycles += DoOperator(@operator);
+
                 _cpu.ProgramCounter += @operator.Length;
             }
         }
 
-                private void DoOperator(Operator @operator)
+        private int DoOperator(Operator @operator)
         {
             switch (@operator.OpCode)
             {
@@ -77,8 +80,7 @@ namespace NESEmul.Core
                 case OpCodes.BCS:
                 case OpCodes.BNE:
                 case OpCodes.BEQ:
-                    DoBranchOperation(@operator);
-                    break;
+                    return DoBranchOperation(@operator);
 
                 case OpCodes.BITAbs:
                 case OpCodes.BITZP:
@@ -286,6 +288,11 @@ namespace NESEmul.Core
                     DoTransferOperation(@operator);
                     break;
             }
+
+            var cycles = @operator.Cycles;
+            if (@operator.HasExtraCycle && _hasBoundaryCross)
+                cycles++;
+            return cycles;
         }
 
         private void DoADCOperation(Operator op)
@@ -376,11 +383,12 @@ namespace NESEmul.Core
             
         }
 
-        private void DoBranchOperation(Operator op)
+        private int DoBranchOperation(Operator op)
         {
             byte operandValue = FetchOperandValue(op);
             bool isNegative = (operandValue & 0x80) == 0x80;
             ushort offset;
+            int currentPage = _cpu.ProgramCounter / 256;
             if(isNegative)
             {
                 offset = (ushort) (operandValue - 256);
@@ -419,8 +427,15 @@ namespace NESEmul.Core
                     break;
             }
 
+            var cycles = op.Cycles;
             if (performOperation)
+            {
                 _cpu.ProgramCounter += offset;
+                cycles++;
+            }
+
+            var newPage = _cpu.ProgramCounter / 256;
+            return cycles + (newPage == currentPage ? 0  : 1);
         }
 
         private void DoDECOperation(Operator op)
@@ -698,9 +713,9 @@ namespace NESEmul.Core
                 case AddressingMode.Absolute:
                     return Build2BytesAddress(op);
                 case AddressingMode.AbsoluteX:
-                    return Build2BytesAddress(op, _cpu.IndexRegisterX);
+                    return Build2BytesAddress(op.Operands[0], op.Operands[1], out _hasBoundaryCross, _cpu.IndexRegisterX);
                 case AddressingMode.AbsoluteY:
-                    return Build2BytesAddress(op, _cpu.IndexRegisterY);
+                    return Build2BytesAddress(op.Operands[0], op.Operands[1], out _hasBoundaryCross, _cpu.IndexRegisterY);
                 case AddressingMode.Indirect:
                     var bytes = _memory.Load2BytesFromMemory(op.Operands[0]);
                     return Build2BytesAddress(bytes[0], bytes[1]);
@@ -711,7 +726,7 @@ namespace NESEmul.Core
                 case AddressingMode.IndirectIndexed:
                     address = op.Operands[0];
                     bytes = _memory.Load2BytesFromMemory(address);
-                    return Build2BytesAddress(bytes[0], bytes[1], _cpu.IndexRegisterY);
+                    return Build2BytesAddress(bytes[0], bytes[1], out _hasBoundaryCross, _cpu.IndexRegisterY);
                 default:
                     throw new InvalidByteCodeException((byte)op.OpCode);
             }
@@ -721,13 +736,20 @@ namespace NESEmul.Core
         private static int Build2BytesAddress(Operator op, byte additionalOffset = 0)
         {
             return Build2BytesAddress(op.Operands[0], op.Operands[1], additionalOffset);
-            //return (op.Operands[1] << 8) + op.Operands[0] + additionalOffset;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int Build2BytesAddress(byte hiByte, byte lowByte, out bool hasOverflow, byte additionalOffset = 0)
+        {
+            int hiByteRes = hiByte + additionalOffset;
+            hasOverflow = hiByteRes > 255;
+            return ((lowByte << 8) + hiByteRes) & 0xFFFF;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int Build2BytesAddress(byte hiByte, byte lowByte, byte additionalOffset = 0)
         {
-            return ((lowByte << 8) + hiByte + additionalOffset) & 0xFFFF;
+            return Build2BytesAddress(hiByte, lowByte, out bool unused, additionalOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

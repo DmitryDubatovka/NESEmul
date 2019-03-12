@@ -43,13 +43,16 @@
     <Compile Include="CPU.cs" />
     <Compile Include="Exceptions\ApplicationException.cs" />
     <Compile Include="Exceptions\InvalidByteCodeException.cs" />
+    <Compile Include="Exceptions\InvalidROMFile.cs" />
     <Compile Include="Exceptions\MemoryOutOfRangeException.cs" />
     <Compile Include="Memory.cs" />
     <Compile Include="OpCodes.cs" />
     <Compile Include="OpCodesMetadataAttribute.cs" />
     <Compile Include="OpCodesDecoder.cs" />
     <Compile Include="Operator.cs" />
+    <Compile Include="PPU.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ROMImage.cs" />
     <Compile Include="Stack.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

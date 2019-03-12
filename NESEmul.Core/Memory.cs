@@ -10,10 +10,12 @@ namespace NESEmul.Core
         private readonly byte[] _bytes;
         private const int LowRamAddress = 0;
         private const int HiRamAddress = 0x1FFF;
+        private PPU _ppu;
 
         public Memory()
         {
             _bytes = new byte[MaxMemorySize];
+            _ppu = PPU.Instance;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -42,7 +44,15 @@ namespace NESEmul.Core
             GuardAddress(address);
             if (AddressInRamRange(address))
                 StoreByteInRam(address, value);
-            _bytes[address] = value;
+            else if (PPU.InPPURegistersAddress(address))
+            {
+
+            }
+            else
+            {
+                _bytes[address] = value;
+            }
+            
         }
 
         public void WriteBytes(int address, byte[] data)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NESEmul.Core
 {
@@ -43,6 +44,25 @@ namespace NESEmul.Core
                     hiByte <<= 1;
                 }
             }
+        }
+
+        public TileColors[,] As8X8Array()
+        {
+            var result = new TileColors[8, 8];
+            for (int i = 0; i < 8; i++)
+            {
+                var tmp = Colors.Skip(i * 8).Take(8).ToArray();
+                result[0, i] = tmp[0];
+                result[1, i] = tmp[1];
+                result[2, i] = tmp[2];
+                result[3, i] = tmp[3];
+                result[4, i] = tmp[4];
+                result[5, i] = tmp[5];
+                result[6, i] = tmp[6];
+                result[7, i] = tmp[7];
+            }
+
+            return result;
         }
     }
 }

@@ -98,7 +98,7 @@ namespace NESEmul.Core
             VSSystemCartridge = (flags & 0x01) == 0x01;
             if((flags & 0x0E) != 0)
                 throw new InvalidROMFile("Bits 1-3 of the 7th byte of header are not zeroes");
-            byte lowerBytesOfMapperType = MapperType;
+            byte lowerBytesOfMapperType = (byte) (MapperType >> 4);
             MapperType = (byte) (flags & 0xF0);
             MapperType += lowerBytesOfMapperType;
             RAMBanksNumber = header[8];

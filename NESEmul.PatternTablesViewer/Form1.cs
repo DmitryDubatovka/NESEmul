@@ -13,10 +13,13 @@ namespace NESEmul.PatternTablesViewer
     public partial class Form1 : Form
     {
         private readonly List<Tile> _tileList;
+
+        private Emulator _emulator;
         public Form1()
         {
             InitializeComponent();
             _tileList = new List<Tile>(512);
+            _emulator = new Emulator();
         }
 
 
@@ -81,8 +84,12 @@ namespace NESEmul.PatternTablesViewer
             var romImage = new ROMImage();
             if (openROMFileDialog.ShowDialog() == DialogResult.OK)
             {
-                using(var stream = openROMFileDialog.OpenFile())
-                    romImage.Load(stream);
+                using (var stream = openROMFileDialog.OpenFile())
+                {
+                    _emulator.Run(stream);
+                    //romImage.Load(stream);
+                }
+
                 if(romImage.VROMBanksNumber < 1)
                     return;
                 byte[] vromBank = romImage.VROMBanks.Single();

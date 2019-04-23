@@ -32,19 +32,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressingMode.cs" />
     <Compile Include="ALUUnit.cs" />
     <Compile Include="CPU.cs" />
+    <Compile Include="Emulator.cs" />
     <Compile Include="Exceptions\ApplicationException.cs" />
     <Compile Include="Exceptions\InvalidByteCodeException.cs" />
     <Compile Include="Exceptions\InvalidROMFile.cs" />
     <Compile Include="Exceptions\MemoryOutOfRangeException.cs" />
+    <Compile Include="InterruptsVectorTable.cs" />
+    <Compile Include="InterruptType.cs" />
     <Compile Include="Memory.cs" />
     <Compile Include="OpCodes.cs" />
     <Compile Include="OpCodesMetadataAttribute.cs" />
@@ -55,6 +67,9 @@
     <Compile Include="ROMImage.cs" />
     <Compile Include="Stack.cs" />
     <Compile Include="Tile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

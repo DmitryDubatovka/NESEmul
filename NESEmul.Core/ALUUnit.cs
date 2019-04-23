@@ -1,5 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using NESEmul.Core.Exceptions;
+using NLog;
 
 namespace NESEmul.Core
 {
@@ -10,6 +13,10 @@ namespace NESEmul.Core
         private readonly Stack _stack;
         private readonly OpCodesDecoder _decoder;
         private bool _hasBoundaryCross;
+        private Logger _logger;
+
+
+        internal int CurrentCycles { get; set; }
 
         public ALUUnit(CPU cpu, Memory memory, Stack stack)
         {
@@ -17,6 +24,8 @@ namespace NESEmul.Core
             _memory = memory;
             _stack = stack;
             _decoder = new OpCodesDecoder(cpu, memory);
+            CurrentCycles = 0;
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         public void Do()
@@ -27,9 +36,26 @@ namespace NESEmul.Core
                 _hasBoundaryCross = false;
                 var @operator = _decoder.Decode(_memory.LoadByteFromMemory(_cpu.ProgramCounter));
                 cycles += DoOperator(@operator);
-
+                
                 _cpu.ProgramCounter += @operator.Length;
             }
+        }
+
+        internal void DoSingleOperation()
+        {
+            _hasBoundaryCross = false;
+            var @operator = _decoder.Decode(_memory.LoadByteFromMemory(_cpu.ProgramCounter));
+            LogOperation(@operator);
+            CurrentCycles += DoOperator(@operator);
+            
+            _cpu.ProgramCounter += @operator.Length;
+        }
+
+        private void LogOperation(Operator @operator)
+        {
+            var operands = string.Join(" ", @operator.Operands.Select(s => $"{s:X2}"));
+            var operatorLog = $"${_cpu.ProgramCounter:X}:{@operator.OpCode, -2:X} {operands, -6} {@operator.OpCode, -10} ";
+            _logger.Info($"{operatorLog} A: {_cpu.Accumulator, -3:X} X: {_cpu.IndexRegisterX, -3:X} Y: {_cpu.IndexRegisterY, -3:X}");
         }
 
         private int DoOperator(Operator @operator)
@@ -243,7 +269,9 @@ namespace NESEmul.Core
 
                 case OpCodes.RTI:
                     _stack.PopFlags();
-                    _cpu.ProgramCounter = (ushort) (Build2BytesAddress(_stack.Pop(), _stack.Pop()) - 1);
+                    var lowByte = _stack.Pop();
+                    var hiByte = _stack.Pop();
+                    _cpu.ProgramCounter = (ushort) (Build2BytesAddress(lowByte, hiByte) - 1);
                     break;
 
                 case OpCodes.SBCImm:
@@ -264,19 +292,22 @@ namespace NESEmul.Core
                 case OpCodes.STAAbsY:
                 case OpCodes.STAIndX:
                 case OpCodes.STAIndY:
-                    _cpu.Accumulator = FetchOperandValue(@operator);
+                    var address = ResolveAddress(@operator);
+                    _memory.StoreByteInMemory(address, _cpu.Accumulator);
                     break;
                 
                 case OpCodes.STXAbs:
                 case OpCodes.STXZP:
                 case OpCodes.STXZPY:
-                    _cpu.IndexRegisterX = FetchOperandValue(@operator);
+                    address = ResolveAddress(@operator);
+                    _memory.StoreByteInMemory(address, _cpu.IndexRegisterX);
                     break;
                 
                 case OpCodes.STYAbs:
                 case OpCodes.STYZP:
                 case OpCodes.STYZPX:
-                    _cpu.IndexRegisterY = FetchOperandValue(@operator);
+                    address = ResolveAddress(@operator);
+                    _memory.StoreByteInMemory(address, _cpu.IndexRegisterY);
                     break;
                 
                 case OpCodes.TAX:
@@ -739,17 +770,24 @@ namespace NESEmul.Core
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int Build2BytesAddress(byte hiByte, byte lowByte, out bool hasOverflow, byte additionalOffset = 0)
+        private static int Build2BytesAddress(byte lowByte, byte hiByte, out bool hasOverflow, byte additionalOffset = 0)
         {
-            int hiByteRes = hiByte + additionalOffset;
+            int hiByteRes = lowByte + additionalOffset;
             hasOverflow = hiByteRes > 255;
-            return ((lowByte << 8) + hiByteRes) & 0xFFFF;
+            return ((hiByte << 8) + hiByteRes) & 0xFFFF;
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lowByte">in the address 0xAABB, the low byte is BB</param>
+        /// <param name="hiByte">in the address 0xAABB, the low byte is AA</param>
+        /// <param name="additionalOffset"></param>
+        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int Build2BytesAddress(byte hiByte, byte lowByte, byte additionalOffset = 0)
+        internal static int Build2BytesAddress(byte lowByte, byte hiByte, byte additionalOffset = 0)
         {
-            return Build2BytesAddress(hiByte, lowByte, out bool unused, additionalOffset);
+            return Build2BytesAddress(lowByte, hiByte, out bool unused, additionalOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

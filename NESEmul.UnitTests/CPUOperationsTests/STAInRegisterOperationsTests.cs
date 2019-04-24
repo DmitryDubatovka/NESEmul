@@ -9,25 +9,31 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [Test]
         public void STAZPOperationTest()
         {
-            InitZPMode(OpCodes.STAZP, 0x80);
+            CPU.Accumulator = 0x20;
+            InitZPMode(OpCodes.STAZP, 0x0, 0, 0x10);
+            Assert.That(Memory.LoadByteFromMemory(0x10), Is.EqualTo(0x0));
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x80));
+            Assert.That(Memory.LoadByteFromMemory(0x10), Is.EqualTo(0x20));
         }
         
         [Test]
         public void STAZPXOperationTest()
         {
-            InitZPXMode(OpCodes.STAZPX, 0x80);
+            CPU.Accumulator = 0x20;
+            InitZPXMode(OpCodes.STAZPX, 0x0, 0x1, 0, 0xF);
+            Assert.That(Memory.LoadByteFromMemory(0x10), Is.EqualTo(0x0));
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x80));
+            Assert.That(Memory.LoadByteFromMemory(0x10), Is.EqualTo(0x20));
         }
         
         [Test]
         public void STAAbsOperationTest()
         {
-            InitAbsMode(OpCodes.STAAbs, 0x80);
+            CPU.Accumulator = 0x20;
+            InitAbsMode(OpCodes.STAAbs, 0, 0, 1, 2);
+            Assert.That(Memory.LoadByteFromMemory(0x0102), Is.EqualTo(0x0));
             CPU.Do();
-            Assert.That(CPU.Accumulator, Is.EqualTo(0x80));
+            Assert.That(Memory.LoadByteFromMemory(0x0102), Is.EqualTo(0x20));
         }
         
         [Test]

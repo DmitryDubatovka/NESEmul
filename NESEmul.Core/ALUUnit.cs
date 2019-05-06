@@ -63,7 +63,7 @@ namespace NESEmul.Core
             switch (@operator.OpCode)
             {
                 case OpCodes.BRK:
-                    _cpu.BreakCommand = true;
+                    _cpu.TriggerInterrupt(InterruptType.IRQ);
                     break;
                 case OpCodes.NOP:
                     break;

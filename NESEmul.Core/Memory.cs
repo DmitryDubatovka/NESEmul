@@ -57,7 +57,7 @@ namespace NESEmul.Core
         private const int MaxMemorySize = 64 * 1024;
         private const int LowRamAddress = 0;
         private const int HiRamAddress = 0x1FFF;
-        private PPU _ppu;
+        private readonly PPU _ppu;
 
         public Memory() : base(MaxMemorySize)
         {

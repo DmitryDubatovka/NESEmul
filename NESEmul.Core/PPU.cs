@@ -7,7 +7,8 @@ namespace NESEmul.Core
     /// </summary>
     public class PPU
     {
-        private PPUSpriteMemory _spriteMemory;
+        private readonly PPUSpriteMemory _spriteMemory;
+        private readonly PPUMemory _ppuMemory;
 
         public static readonly PPU Instance;
 
@@ -16,6 +17,7 @@ namespace NESEmul.Core
         private PPU()
         {
             _spriteMemory = PPUSpriteMemory.Instance;
+            _ppuMemory = PPUMemory.Instance;
         }
 
         static PPU()
@@ -98,7 +100,8 @@ namespace NESEmul.Core
         private bool _spriteTileSelect;
         
         /// <summary>
-        /// 2nd bit of the PPUCTRL register
+        /// 2nd bit of the PPUCTRL register.
+        /// VRAM address increment per CPU read/write of PPUDATA (false: add 1, going across; true: add 32, going down)
         /// </summary>
         private bool _incrementMode;
 
@@ -152,6 +155,11 @@ namespace NESEmul.Core
 
         #endregion
 
+        #region PPU Address register
+
+        private int _ppuAddress;
+
+        #endregion
         public byte PPUCTRL
         {
             get
@@ -253,6 +261,49 @@ namespace NESEmul.Core
         }
 
         public byte SpriteMemoryAddress { private get; set; }
+
+        private int PPUAddress
+        {
+            get => _ppuAddress;
+            set
+            {
+                _ppuAddress <<= 8;
+                _ppuAddress += value;
+                _ppuAddress &= 0xFFFF;
+            }
+        }
+
+        private byte _ppuDataBuffer;
+        private byte PPUData
+        {
+            get
+            {
+                var result = _ppuMemory.LoadByteFromMemory(PPUAddress);
+                if (PPUAddress > 0x0 && PPUAddress <= 0x3EFF)
+                {
+                    //When reading while the VRAM address is in the range 0 -$3EFF(i.e., before the palettes), the read will return the contents of an internal read buffer.
+                    //This internal buffer is updated only when reading PPUDATA, and so is preserved across frames.After the CPU reads and gets the contents of the internal
+                    //buffer, the PPU will immediately update the internal buffer with the byte at the current VRAM address.Thus, after setting the VRAM address, one should
+                    //first read this register and discard the result.
+
+                    // Reading palette data from $3F00-$3FFF works differently.The palette data is placed immediately on the data bus, and hence no dummy read is required.
+                    // Reading the palettes still updates the internal buffer though, but the data placed in it is the mirrored nametable data that would appear "underneath"
+                    // the palette.
+                    var tmp = result;
+                    result = _ppuDataBuffer;
+                    _ppuDataBuffer = tmp;
+                }
+
+                PPUAddress += _incrementMode ? 32 : 1;
+                return result;
+            }
+            set
+            {
+                _ppuMemory.StoreByteInMemory(PPUAddress, value);
+                PPUAddress += _incrementMode ? 32 : 1;
+            }
+        }
+
         public static bool InPPURegistersAddress(int address)
         {
             return address >= PPUCTRLAddress && address <= OAMDMAAddress;
@@ -271,9 +322,15 @@ namespace NESEmul.Core
                 case SpriteMemoryAddrAddress:
                     SpriteMemoryAddress = value;
                     return;
-                case  SpriteDataAddress:
+                case SpriteDataAddress:
                     _spriteMemory.StoreByteInMemory(SpriteMemoryAddress, value);
                     SpriteMemoryAddress++;
+                    return;
+                case PPUAddrAddress:
+                    PPUAddress = value;
+                    return;
+                case PPUDataAddress:
+                    PPUData = value;
                     return;
             }
             
@@ -289,10 +346,12 @@ namespace NESEmul.Core
                     return PPUMask;
                 case PPUStatusAddress:
                     return PPUStatusRegister;
-                case  SpriteDataAddress:
+                case SpriteDataAddress:
                     var val = _spriteMemory.LoadByteFromMemory(SpriteMemoryAddress);
                     SpriteMemoryAddress++;
                     return val;
+                case PPUDataAddress:
+                    return PPUData;
             }
             throw new ApplicationException($"Invalid address of PPU register {address}");
         }

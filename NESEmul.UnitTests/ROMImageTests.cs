@@ -18,7 +18,7 @@ namespace NESEmul.UnitTests
                 image.Load(stream);
             }
             Assert.That(image.MapperType, Is.EqualTo(0));
-            Assert.That(image.VROMBanksNumber, Is.EqualTo(1));
+            Assert.That(image.CHRROMBanksNumber, Is.EqualTo(1));
             Assert.That(image.ROMBanksNumber, Is.EqualTo(1));
             
         }

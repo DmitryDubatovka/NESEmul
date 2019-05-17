@@ -16,9 +16,9 @@ namespace NESEmul.Core
         public byte ROMBanksNumber { get; private set; }
 
         /// <summary>
-        /// Number of 8kB VROM banks
+        /// Number of 8kB CHRROM banks
         /// </summary>
-        public byte VROMBanksNumber { get; private set; }
+        public byte CHRROMBanksNumber { get; private set; }
 
         public byte RAMBanksNumber { get; private set; }
 
@@ -55,7 +55,9 @@ namespace NESEmul.Core
         public byte MapperType { get; private set; }
 
         public List<byte[]> ROMBanks { get; private set; }
-        public List<byte[]> VROMBanks { get; private set; }
+
+        //8kB CHRROM banks
+        public List<byte[]> CHRROMBanks { get; private set; }
         #endregion
 
         public void Load(Stream inputFile)
@@ -71,10 +73,10 @@ namespace NESEmul.Core
                     var romBank = r.ReadBytes(16 * 1024);
                     ROMBanks.Add(romBank);
                 }
-                VROMBanks = new List<byte[]>(VROMBanksNumber);
-                while (VROMBanks.Count < VROMBanksNumber)
+                CHRROMBanks = new List<byte[]>(CHRROMBanksNumber);
+                while (CHRROMBanks.Count < CHRROMBanksNumber)
                 {
-                    VROMBanks.Add(r.ReadBytes(8 *1024));
+                    CHRROMBanks.Add(r.ReadBytes(8 *1024));
                 }
             }
 
@@ -87,7 +89,7 @@ namespace NESEmul.Core
             if (nesString != "NES" || header[3] != 0x1A)
                 throw new InvalidROMFile($"Invalid header string {nesString}");
             ROMBanksNumber = header[4];
-            VROMBanksNumber = header[5];
+            CHRROMBanksNumber = header[5];
             var flags = header[6];
             IsVerticalMirroring = (flags & 0x01) == 0x01;
             IsBatteryBackedRAM = (flags & 0x02) == 0x02;

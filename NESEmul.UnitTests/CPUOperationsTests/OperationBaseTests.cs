@@ -11,7 +11,7 @@ namespace NESEmul.UnitTests.CPUOperationTests
         [SetUp]
         protected void Setup()
         {
-            Memory = new Memory();
+            Memory = Memory.Instance;
             CPU = new CPU(0, Memory);
         }
 

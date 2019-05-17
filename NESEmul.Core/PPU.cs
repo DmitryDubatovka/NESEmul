@@ -9,6 +9,7 @@ namespace NESEmul.Core
     {
         private readonly PPUSpriteMemory _spriteMemory;
         private readonly PPUMemory _ppuMemory;
+        private readonly Memory _cpuMemory;
 
         public static readonly PPU Instance;
 
@@ -18,6 +19,7 @@ namespace NESEmul.Core
         {
             _spriteMemory = PPUSpriteMemory.Instance;
             _ppuMemory = PPUMemory.Instance;
+            _cpuMemory = Memory.Instance;
         }
 
         static PPU()
@@ -67,7 +69,7 @@ namespace NESEmul.Core
         /// <summary>
         /// OAM DMA high address
         /// </summary>
-        public const int OAMDMAAddress = 0x2008;
+        public const int OAMDMAAddress = 0x4014;
 
         #endregion
         
@@ -117,27 +119,27 @@ namespace NESEmul.Core
         /// <summary>
         /// Image Mask, 0 = don't show left 8 columns of the screen. Bit 1
         /// </summary>
-        private bool _imageMaskEnabled { get; set; }
+        private bool _imageMaskEnabled;
 
         /// <summary>
         /// Sprite Mask, false = don't show sprites in left 8 columns. Bit 2
         /// </summary>
-        private bool _spriteMaskEnabled { get; set; }
+        private bool _spriteMaskEnabled;
 
         /// <summary>
         /// Screen Enable, true = show picture, false = blank screen. Bit 3
         /// </summary>
-        private bool _screenEnabled { get; set; }
+        private bool _screenEnabled;
 
         /// <summary>
         /// Sprites Enable, true = show sprites, false = hide sprites. Bit 4
         /// </summary>
-        private bool _spritesEnabled { get; set; }
+        private bool _spritesEnabled;
 
         /// <summary>
         /// Background Color, 0 = black, 1 = blue, 2 = green, 4 = red. Do not use any other numbers. Bits 5-7
         /// </summary>
-        private byte _backgroundColor { get; set; }
+        private byte _backgroundColor;
 
         #endregion
 
@@ -146,12 +148,16 @@ namespace NESEmul.Core
         /// <summary>
         /// Hit Flag, true = Sprite refresh has hit sprite #0. This flag resets to false when screen refresh starts
         /// </summary>
-        private bool _hitFlag { get; set; }
+        private bool _hitFlag;
 
         /// <summary>
         /// VBlank Flag, true = PPU is in VBlank state. This flag resets to false when VBlank ends or CPU reads $2002
         /// </summary>
-        private bool _vblankFlag { get; set; }
+        private bool _vblankFlag;
+
+        //Sprite overflow. The intent was for this flag to be set whenever more than eight sprites appear on a scanline, but a hardware bug causes the actual behavior to be more complicated
+        //and generate false positives as well as false negatives; see PPU sprite evaluation. This flag is set during sprite  evaluation and cleared at dot 1 (the second dot) of the pre-render line.
+        private bool _spriteOverflow;
 
         #endregion
 
@@ -160,6 +166,7 @@ namespace NESEmul.Core
         private int _ppuAddress;
 
         #endregion
+
         public byte PPUCTRL
         {
             get
@@ -246,16 +253,23 @@ namespace NESEmul.Core
 
                 result += (byte)(_hitFlag ? 1 : 0);
                 result <<= 1;
+                
+                result += (byte)(_spriteOverflow ? 1 : 0);
+                result <<= 1;
 
-                result += 0; // Bits 0-5 are not used
-                result <<= 5;
+                result += 0; // Bits 0-4 are not used
+                result <<= 4;
+                
+                //Reading the status register clears bit 7
+                _hitFlag = false;
                 return result;
             }
             private set
             {
                 _vblankFlag = (value & 0x80) != 0;
                 _hitFlag = (value & 0x40) != 0;
-                if((value & 0x3F) > 0)
+                _spriteOverflow = (value & 0x20) != 0;
+                if((value & 0x1F) > 0)
                     throw new ApplicationException($"PPU status register has values in bits 0-5. Value {value}");
             }
         }
@@ -306,7 +320,7 @@ namespace NESEmul.Core
 
         public static bool InPPURegistersAddress(int address)
         {
-            return address >= PPUCTRLAddress && address <= OAMDMAAddress;
+            return address >= PPUCTRLAddress && address <= PPUDataAddress;
         }
 
         public void WriteToRegister(int address, byte value)
@@ -331,6 +345,10 @@ namespace NESEmul.Core
                     return;
                 case PPUDataAddress:
                     PPUData = value;
+                    return;
+                case OAMDMAAddress:
+                    var startAddress = value * 0x100;
+                    _spriteMemory.WriteBytes(0, _cpuMemory.ReadBytes(startAddress, startAddress + 0xFF));
                     return;
             }
             

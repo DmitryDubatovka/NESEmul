@@ -9,7 +9,7 @@ namespace NESEmul.UnitTests.MemoryTests
         [Test]
         public void RamMirrorsTest()
         {
-            var memory = new Memory();
+            var memory = Memory.Instance;
             var value = memory.LoadByteFromMemory(0x100);
             Assert.That(value, Is.EqualTo(0));
             memory.StoreByteInMemory(0x100, 0xEE);

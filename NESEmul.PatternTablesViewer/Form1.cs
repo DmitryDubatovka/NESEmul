@@ -90,9 +90,9 @@ namespace NESEmul.PatternTablesViewer
                     //romImage.Load(stream);
                 }
 
-                if(romImage.VROMBanksNumber < 1)
+                if(romImage.CHRROMBanksNumber < 1)
                     return;
-                byte[] vromBank = romImage.VROMBanks.Single();
+                byte[] vromBank = romImage.CHRROMBanks.Single();
                 _tileList.Clear();
                 for (int i = 0; i < vromBank.Length / 16; i++)
                 {

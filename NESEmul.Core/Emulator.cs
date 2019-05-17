@@ -9,11 +9,13 @@ namespace NESEmul.Core
         private CPU _cpu;
         private readonly Memory _memory;
         private PPU _ppu;
+        private PPUMemory _ppuMemory;
 
         public Emulator()
         {
-            _memory = new Memory();
+            _memory = Memory.Instance;
             _cpu = new CPU(_memory);
+            _ppuMemory = PPUMemory.Instance;
             _ppu = PPU.Instance;
         }
 
@@ -22,8 +24,10 @@ namespace NESEmul.Core
             _romImage = new ROMImage();
             _romImage.Load(romImageStream);
 
-            _memory.WriteBytes(0x8000, _romImage.ROMBanks[0]);
-            _memory.WriteBytes(0xC000, _romImage.ROMBanks[_romImage.ROMBanksNumber > 1 ? 1 : 0]);
+            _memory.InitFromROM(_romImage);
+            _ppuMemory.InitFromROM(_romImage);
+            //_memory.WriteBytes(0x8000, _romImage.ROMBanks[0]);
+            //_memory.WriteBytes(0xC000, _romImage.ROMBanks[_romImage.ROMBanksNumber > 1 ? 1 : 0]);
             Run();
         }
 

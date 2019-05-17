@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using NESEmul.Core.Exceptions;
+using ApplicationException = NESEmul.Core.Exceptions.ApplicationException;
 
 namespace NESEmul.Core
 {
@@ -48,8 +50,18 @@ namespace NESEmul.Core
         {
             GuardAddress(address);
             Bytes[address] = value;
-            
         }
+
+        public void WriteBytes(int address, byte[] data)
+        {
+            if(address + data.Length > _maxMemorySize)
+                throw new MemoryOutOfRangeException(address + data.Length);
+            //TODO: check for RAM mirrors
+            Array.Copy(data, 0, Bytes, address, data.Length);
+        }
+
+        public virtual void InitFromROM(ROMImage romImage)
+        {}
     }
 
     public class Memory : MirroredMemory
@@ -59,7 +71,14 @@ namespace NESEmul.Core
         private const int HiRamAddress = 0x1FFF;
         private readonly PPU _ppu;
 
-        public Memory() : base(MaxMemorySize)
+        public static readonly Memory Instance;
+
+        static Memory()
+        {
+            Instance = new Memory();
+        }
+
+        private Memory() : base(MaxMemorySize)
         {
             _ppu = PPU.Instance;
         }
@@ -99,15 +118,17 @@ namespace NESEmul.Core
             {
                 Bytes[address] = value;
             }
-            
         }
 
-        public void WriteBytes(int address, byte[] data)
+        public byte[] ReadBytes(int startAddress, int endAddress)
         {
-            if(address + data.Length > MaxMemorySize)
-                throw new MemoryOutOfRangeException(address + data.Length);
-            //TODO: check for RAM mirrors
-            Array.Copy(data, 0, Bytes, address, data.Length);
+            GuardAddress(startAddress);
+            GuardAddress(endAddress);
+            if(startAddress >= endAddress)
+                throw new ApplicationException($"Invalid start/end addresses {startAddress} {endAddress}");
+            var result = new byte[endAddress - startAddress];
+            Array.Copy(Bytes, startAddress, result, 0, result.Length);
+            return result;
         }
 
         private void StoreByteInRam(int address, byte value)
@@ -125,6 +146,12 @@ namespace NESEmul.Core
         {
             return address >= LowRamAddress && address <= HiRamAddress;
         }
+
+        public override void InitFromROM(ROMImage romImage)
+        {
+            WriteBytes(0x8000, romImage.ROMBanks[0]);
+            WriteBytes(0xC000, romImage.ROMBanks[romImage.ROMBanksNumber > 1 ? 1 : 0]);
+        }
     }
 
     public class PPUMemory : MirroredMemory
@@ -138,6 +165,20 @@ namespace NESEmul.Core
         static PPUMemory()
         {
             Instance = new PPUMemory();
+        }
+
+        public override void InitFromROM(ROMImage romImage)
+        {
+            if (romImage.CHRROMBanksNumber > 0)
+            {
+                byte[] chrRomBytes = romImage.CHRROMBanks[0];
+                var bank = new byte[0x1000];
+                Array.Copy(chrRomBytes, bank, bank.Length);
+                WriteBytes(0, bank);
+                
+                Array.Copy(chrRomBytes, 0x1000, bank, 0, bank.Length);
+                WriteBytes(0x1000, bank);
+            }
         }
     }
 
